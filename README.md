@@ -1,10 +1,11 @@
 LazyTorrent
 ===========
 
-***IMPORTANT***
-This application was developed for experimental and educational purposes.  It is not intended to be used for the purposes of illegally downloading copyrighted or otherwise illegal materials. 
+***IMPORTANT***  
+This application was developed for experimental and educational purposes.    
+It is not intended to be used for the purposes of illegally downloading copyrighted or otherwise illegal materials. 
 
-***Usage***
+***Usage***  
 This application assumes the following: 
 
 1) You are using Windows  

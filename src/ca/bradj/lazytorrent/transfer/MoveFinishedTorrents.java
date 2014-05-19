@@ -1,4 +1,4 @@
-package application;
+package ca.bradj.lazytorrent.transfer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,8 +16,10 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 
 import ca.bradj.common.base.Failable;
+import ca.bradj.lazytorrent.app.Config;
 import ca.bradj.lazytorrent.app.Logger;
-import ca.bradj.lazytorrent.transfer.AlreadyTransferred;
+import ca.bradj.lazytorrent.matching.TorrentMatch;
+import ca.bradj.lazytorrent.matching.TorrentMatchings;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -164,11 +166,7 @@ public class MoveFinishedTorrents implements Runnable {
 						line = reader.readLine();
 						continue;
 					}
-					if (line.trim().length() > 0) { // nextBool
-													// used
-													// to
-													// reduce
-													// output
+					if (line.trim().length() > 0) {
 						logger.debug(line);
 					}
 					line = reader.readLine();

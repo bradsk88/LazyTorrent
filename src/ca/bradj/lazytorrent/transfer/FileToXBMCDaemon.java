@@ -6,11 +6,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import application.MoveFinishedTorrents;
-import application.TorrentMatchings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import ca.bradj.lazytorrent.app.Logger;
+import ca.bradj.lazytorrent.matching.TorrentMatchings;
 import ca.bradj.lazytorrent.rss.FXThreading;
 
 public class FileToXBMCDaemon {

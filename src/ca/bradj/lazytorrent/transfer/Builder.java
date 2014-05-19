@@ -1,4 +1,4 @@
-package application;
+package ca.bradj.lazytorrent.transfer;
 
 import java.io.File;
 import java.nio.file.Path;

@@ -1,4 +1,4 @@
-package application;
+package ca.bradj.lazytorrent.matching;
 
 import javafx.util.Pair;
 

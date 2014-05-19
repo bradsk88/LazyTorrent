@@ -3,11 +3,11 @@ package ca.bradj.lazytorrent.scrape;
 import java.util.Collection;
 import java.util.Collections;
 
-import application.Matching;
 import ca.bradj.common.base.Confidence;
 import ca.bradj.common.base.Failable;
 import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.Logger;
+import ca.bradj.lazytorrent.matching.Matching;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 
 import com.google.common.base.Optional;

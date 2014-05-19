@@ -4,9 +4,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 
-import application.Matching;
 import ca.bradj.common.base.Failable;
 import ca.bradj.lazytorrent.connection.Torrent;
+import ca.bradj.lazytorrent.matching.Matching;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 
 import com.google.common.base.Preconditions;

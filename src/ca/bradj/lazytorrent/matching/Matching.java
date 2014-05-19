@@ -1,4 +1,4 @@
-package application;
+package ca.bradj.lazytorrent.matching;
 
 import java.util.Collection;
 

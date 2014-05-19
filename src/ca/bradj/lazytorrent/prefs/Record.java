@@ -12,7 +12,7 @@ import java.util.SortedSet;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import application.Config;
+import ca.bradj.lazytorrent.app.Config;
 import ca.bradj.lazytorrent.rss.FXThreading;
 
 import com.google.common.base.Preconditions;

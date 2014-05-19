@@ -1,4 +1,4 @@
-package application;
+package ca.bradj.lazytorrent.app;
 
 import java.awt.AWTException;
 import java.awt.Image;
@@ -32,12 +32,8 @@ import javax.swing.SwingUtilities;
 import ca.bradj.common.base.Failable;
 import ca.bradj.fx.dialogs.Dialogs;
 import ca.bradj.fx.dialogs.TextInputQuestionDialog;
-import ca.bradj.lazytorrent.app.AlreadyDownloaded;
-import ca.bradj.lazytorrent.app.LazyTorrentsControlPanel;
-import ca.bradj.lazytorrent.app.LogListener;
-import ca.bradj.lazytorrent.app.Logger;
-import ca.bradj.lazytorrent.app.SimpleLogger;
 import ca.bradj.lazytorrent.automated.DownloadDaemon;
+import ca.bradj.lazytorrent.matching.TorrentMatchings;
 import ca.bradj.lazytorrent.rss.FXThreading;
 import ca.bradj.lazytorrent.rss.RSSFeed;
 import ca.bradj.lazytorrent.rss.TorrentsRSSFeed;
@@ -97,6 +93,7 @@ public class Main extends Application {
 		firstTime = true;
 		Platform.setImplicitExit(false);
 		try {
+			stage.setOpacity(0);
 			stage.show();
 			Logger logger = new SimpleLogger();
 
@@ -112,7 +109,6 @@ public class Main extends Application {
 				stage.close();
 				System.exit(0);
 			}
-
 			TorrentMatchings m = TorrentMatchings.load(rootG);
 			logger.debug("Opened TorrentMatchings at " + m.getFile());
 
@@ -132,6 +128,7 @@ public class Main extends Application {
 			Parent pane = new LazyTorrentsControlPanel(rootG, m, alreadyDownloaded, logger, rss,
 					fileToXBMCDaemon.countDownProperty()).getNode();
 			Scene scene = new Scene(pane, 1024, 768);
+			stage.setOpacity(1.0);
 			stage.setScene(scene);
 			hide(stage);
 		} catch (Exception e) {

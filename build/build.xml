@@ -35,6 +35,11 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-controls\8.0-r1">
+				<filename name="jfxtras-controls-8.0-r1.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
 			<fileset dir="C:\eclipse\plugins\org.junit_4.11.0.v201303080030">
 				<filename name="junit.jar"/>	
 			</fileset>
@@ -45,8 +50,18 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-labs\8.0-r1">
+				<filename name="jfxtras-labs-8.0-r1.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
 			<fileset dir="C:\Users\Brad\.m2\repository\org\hamcrest\hamcrest-core\1.1">
 				<filename name="hamcrest-core-1.1.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-common\8.0-r1">
+				<filename name="jfxtras-common-8.0-r1.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -54,16 +69,26 @@
 				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>	
 			</fileset>
 		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\com\google\guava\guava\17.0">
+				<filename name="guava-17.0.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-fxml\8.0-r1">
+				<filename name="jfxtras-fxml-8.0-r1.jar"/>	
+			</fileset>
+		</copy>
 		
 		<mkdir dir="project" />
 		<copy todir="project">
-			<fileset dir="C:\Users\Brad\Dropbox\SCHOOL\workspace\SuperLazy">
-				<include name="test/**" />
+			<fileset dir="C:\Users\Brad\LazyTorrent">
+				<include name="src/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
-			<fileset dir="C:\Users\Brad\Dropbox\SCHOOL\workspace\SuperLazy">
-				<include name="src/**" />
+			<fileset dir="C:\Users\Brad\LazyTorrent">
+				<include name="test/**" />
 			</fileset>
 		</copy>
 		
@@ -80,9 +105,14 @@
 			<fileset dir="externalLibs">
 				<include name="guava-15.0.jar"/>
 				<include name="mockito-core-1.9.5.jar"/>
+				<include name="jfxtras-fxml-8.0-r1.jar"/>
 				<include name="objenesis-1.0.jar"/>
+				<include name="jfxtras-controls-8.0-r1.jar"/>
 				<include name="joda-time-2.3.jar"/>
 				<include name="junit.jar"/>
+				<include name="jfxtras-labs-8.0-r1.jar"/>
+				<include name="guava-17.0.jar"/>
+				<include name="jfxtras-common-8.0-r1.jar"/>
 				<include name="hamcrest-core-1.1.jar"/>
 				<include name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
 			</fileset>
@@ -146,7 +176,7 @@
 		
 		<fx:application id="fxApplication"
 			name="LazyTorrent"
-			mainClass="application.Main"
+			mainClass="ca.bradj.lazytorrent.app.Main"
 		/>
 	
 		<mkdir dir="build/classes/META-INF" />

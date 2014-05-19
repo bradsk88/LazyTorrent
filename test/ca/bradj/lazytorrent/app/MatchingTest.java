@@ -15,8 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import application.Matching;
 import ca.bradj.common.base.Failable;
+import ca.bradj.lazytorrent.matching.Matching;
 import ca.bradj.lazytorrent.prefs.DefaultPreferences;
 import ca.bradj.lazytorrent.prefs.Preferences;
 

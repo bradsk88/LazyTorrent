@@ -1,4 +1,4 @@
-package application;
+package ca.bradj.lazytorrent.app;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,8 +10,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
-
-import ca.bradj.lazytorrent.app.Logger;
 
 public class LoggerSaveClear {
 

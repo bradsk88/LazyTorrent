@@ -7,6 +7,9 @@ import java.util.Collection;
 
 import org.junit.Test;
 
+import ca.bradj.lazytorrent.matching.Negation;
+import ca.bradj.lazytorrent.matching.Negations;
+
 import com.google.common.collect.Lists;
 
 public class NegationsTest {

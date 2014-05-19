@@ -6,11 +6,17 @@ This application was developed for experimental and educational purposes.  It is
 
 ***Usage***
 This application assumes the following: 
+
 1) You are using Windows 
+
 2) You have uTorrent installed at C:\Program Files (x86)\uTorrent\uTorrent.exe 
+
 3) You have WinRAR installed and the command line application C:\Program Files\WinRAR\unrar.exe exists 
+
 4) You have a hard drive labeled D: 
+
 5) You have configured uTorrent to move the files from completed torrents to D:\Done 
+
 6) You have a network device entitled \\XBMCBUNTU to which the files from completed torrents will be moved. 
 
 Many of these requirements will be loosened eventually.

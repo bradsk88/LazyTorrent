@@ -13,7 +13,7 @@ This application assumes the following:
 3) You have WinRAR installed and the command line application C:\Program Files\WinRAR\unrar.exe exists  
 4) You have a hard drive labeled D:   
 5) You have configured uTorrent to move the files from completed torrents to D:\Done  
-6) You have a network device entitled \\XBMCBUNTU to which the files from completed torrents will be moved.   
+6) You have a network device entitled \\\\XBMCBUNTU to which the files from completed torrents will be moved.   
 
 Many of these requirements will be loosened eventually.  
 
@@ -24,5 +24,5 @@ Select file "My.New.File.To.Download.S01.E10.COOLGUYS.xVid.US.TV"
 Click "I want to download this"  
 In the new dialog, change the name to "My.New.File.To.Download"   
 In the future, file like "My.New.File.To.Download.S02.E99.NOTCOOL.h264.REPACK" will automatically be downloaded and will be 
-transferred to \\XBMCBUNTU\media_drive\TV\{{{THIS_YEAR}}}\My New File To Download.  
+transferred to \\\\XBMCBUNTU\media_drive\TV\\{{{THIS_YEAR}}}\My New File To Download.  
 --Where {{{THIS_YEAR}}} will be the current year.  Eg: 2014.  

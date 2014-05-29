@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.util.Pair;
 import ca.bradj.common.base.Failable;
 import ca.bradj.lazytorrent.connection.Torrent;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
@@ -33,27 +34,29 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 	}
 
 	public void doNow() {
-		for (RSSTorrent i : listView.getLastScrape()) {
-			if (alreadyDownloaded.isSameNameAndEpisode(i)) {
+		for (Pair<RSSTorrent, String> i : listView.getLastScrape()) {
+			RSSTorrent torrent = i.getKey();
+			if (alreadyDownloaded.isSameNameAndEpisode(torrent)) {
 				continue;
 			}
 
 			try {
-				Failable<File> f = Torrent.download(currentTorrentsDir, i);
+				Failable<File> f = Torrent.download(currentTorrentsDir, torrent);
 				if (f.isSuccess()) {
 					Torrent.openAndStart(f.get(), logger);
-					alreadyDownloaded.add(i);
-					logger.log("Succesfully opened: " + f.get().getName());
+					alreadyDownloaded.add(torrent);
+					logger.log("Succesfully opened: \"" + f.get().getName() + "\" because it matched: \""
+							+ i.getValue() + "\"");
 					continue;
 				}
 				logger.log("Failed to download because: " + f.getReason());
 				System.err.println(f.getReason());
 			} catch (MalformedURLException e) {
-				alreadyDownloaded.add(i);
+				alreadyDownloaded.add(torrent);
 				logger.error(e.getMessage());
 				e.printStackTrace();
 			} catch (IOException e) {
-				alreadyDownloaded.add(i);
+				alreadyDownloaded.add(torrent);
 				logger.error(e.getMessage());
 				e.printStackTrace();
 			}

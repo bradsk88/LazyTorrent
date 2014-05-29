@@ -3,6 +3,7 @@ package ca.bradj.lazytorrent.automated;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import javafx.util.Pair;
 import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.AlreadyDownloaded;
 import ca.bradj.lazytorrent.app.DownloadScrapedItems;
@@ -36,7 +37,7 @@ public class DownloadLatestMatches implements Runnable {
 	public void run() {
 		try {
 			Collection<RSSTorrent> rssL = rss.requestRefresh();
-			Collection<WithConfidence<RSSTorrent>> scraped = new RSSFeedScraper(prefs, logger)
+			Collection<WithConfidence<Pair<RSSTorrent, String>>> scraped = new RSSFeedScraper(prefs, logger)
 					.getDownloadCandidates(rssL);
 			logger.debug("Downloading " + scraped.size() + " torrents if not already downloaded");
 			new DownloadScrapedItems(rootDir, toSupplier(scraped), already, logger).doNow();
@@ -45,11 +46,11 @@ public class DownloadLatestMatches implements Runnable {
 		}
 	}
 
-	private ScrapedItemsProvider toSupplier(final Collection<WithConfidence<RSSTorrent>> scraped) {
+	private ScrapedItemsProvider toSupplier(final Collection<WithConfidence<Pair<RSSTorrent, String>>> scraped) {
 		return new ScrapedItemsProvider() {
 
 			@Override
-			public Collection<RSSTorrent> getLastScrape() {
+			public Collection<Pair<RSSTorrent, String>> getLastScrape() {
 				return WithConfidence.stripConfidence(scraped);
 			}
 		};

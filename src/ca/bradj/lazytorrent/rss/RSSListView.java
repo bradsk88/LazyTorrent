@@ -37,7 +37,7 @@ public class RSSListView {
 
 	private ListView<RSSTorrent> makeNode(RSSFeed rss, Preferences prefs) {
 		ListView<RSSTorrent> listView = new ListView<>();
-		listView.setCellFactory(new RSSTorrentCellFactory(prefs));
+		listView.setCellFactory(new SimpleRSSTorrentCellFactory(prefs));
 		rss.addUpdateListener(listener);
 		return listView;
 	}

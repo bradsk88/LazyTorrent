@@ -1,4 +1,4 @@
-package ca.bradj.lazytorrent.app;
+package ca.bradj.lazytorrent.prefs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,8 +17,6 @@ import org.mockito.Mockito;
 
 import ca.bradj.common.base.Failable;
 import ca.bradj.lazytorrent.matching.Matching;
-import ca.bradj.lazytorrent.prefs.DefaultPreferences;
-import ca.bradj.lazytorrent.prefs.Preferences;
 
 import com.google.common.collect.Lists;
 
@@ -29,7 +27,11 @@ public class MatchingTest {
 
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException {
-		prefs = DefaultPreferences.load(ROOT.toPath());
+		Collection<String> shows = Lists.newArrayList();
+		shows.add("The Daily Show");
+		shows.add("NOVA");
+		prefs = new DefaultPreferences(ROOT.toPath(), shows);
+
 	}
 
 	@AfterClass
@@ -42,6 +44,13 @@ public class MatchingTest {
 		String testName = "the.daily.show.2014.01.30.rep.nancy.pelosi.720p.hdtv.x264-2hd";
 		Failable<Pair<String, Double>> strongestMatch = Matching.getStrongestMatch(prefs.getList(), testName);
 		assertTrue(strongestMatch.isSuccess());
+	}
+
+	@Test
+	public void testNOVAShouldntMatchRayDonovan() {
+		String testName = "Ray.Donovan.S01E08.720p.BluRay.X264-REWARD";
+		boolean matches = prefs.matches(testName);
+		assertFalse(matches);
 	}
 
 	@Test

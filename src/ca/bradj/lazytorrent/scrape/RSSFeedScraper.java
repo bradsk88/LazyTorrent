@@ -2,6 +2,7 @@ package ca.bradj.lazytorrent.scrape;
 
 import java.util.Collection;
 
+import javafx.util.Pair;
 import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.prefs.Preferences;
@@ -21,12 +22,13 @@ public class RSSFeedScraper {
 		this.logger = Preconditions.checkNotNull(logger);
 	}
 
-	public Collection<WithConfidence<RSSTorrent>> getDownloadCandidates(Collection<RSSTorrent> torrents) {
+	public Collection<WithConfidence<Pair<RSSTorrent, String>>> getDownloadCandidates(Collection<RSSTorrent> torrents) {
 		Preconditions.checkNotNull(torrents);
 
 		ImmutableList<RSSTorrent> lastItems = ImmutableList.copyOf(torrents);
 
-		Collection<WithConfidence<RSSTorrent>> out = Lists.newArrayListWithExpectedSize(lastItems.size() / 2); // rough-heuristic
+		Collection<WithConfidence<Pair<RSSTorrent, String>>> out = Lists
+				.newArrayListWithExpectedSize(lastItems.size() / 2); // rough-heuristic
 		for (String p : prefs.getList()) {
 			out.addAll(new PreferenceScrape(p, logger).chooseBestMatch(lastItems));
 		}

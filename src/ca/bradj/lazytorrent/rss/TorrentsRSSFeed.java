@@ -19,6 +19,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import ca.bradj.common.base.Failable;
 import ca.bradj.lazytorrent.app.AlreadyDownloaded;
 import ca.bradj.lazytorrent.app.Logger;
 
@@ -64,6 +65,8 @@ public class TorrentsRSSFeed implements RSSFeed {
 			return null;
 		}
 	};
+
+	private static final Failable<RSSTorrent> EXPECTED_START_TAG = Failable.fail("Expected start tag");
 
 	public TorrentsRSSFeed(String torrentsURL, AlreadyDownloaded alreadyDownloaded, Logger logger) {
 		this.already = alreadyDownloaded;
@@ -131,7 +134,12 @@ public class TorrentsRSSFeed implements RSSFeed {
 				XMLEvent event = eventReader.nextEvent();
 				if (event.isStartElement()) {
 					if (is(ITEM, event)) {
-						torrents.add(makeTorrent(eventReader));
+						Failable<RSSTorrent> makeTorrent = makeTorrent(eventReader);
+						if (makeTorrent.isFailure()) {
+							logger.debug("Problem parsing feed: " + makeTorrent.getReason());
+							continue;
+						}
+						torrents.add(makeTorrent.get());
 						continue;
 					}
 				}
@@ -149,24 +157,32 @@ public class TorrentsRSSFeed implements RSSFeed {
 		return torrents;
 	}
 
-	private RSSTorrent makeTorrent(XMLEventReader eventReader) throws XMLStreamException {
+	private Failable<RSSTorrent> makeTorrent(XMLEventReader eventReader) throws XMLStreamException {
 		DefaultRSSTorrent.Builder b = DefaultRSSTorrent.builder();
 
-		preRead(eventReader);
+		if (!preRead(eventReader)) {
+			return EXPECTED_START_TAG;
+		}
 		XMLEvent nextEvent = eventReader.nextEvent();
 		b.name(nextEvent.asCharacters().getData());
 		readLong(b, eventReader, NAME_EXT);
-		preRead(eventReader);
+		if (!preRead(eventReader)) {
+			return EXPECTED_START_TAG;
+		}
 		b.link(eventReader.nextEvent().asCharacters().getData());
 		readLong(b, eventReader, LINK_EXT);
-		preRead(eventReader);
+		if (!preRead(eventReader)) {
+			return EXPECTED_START_TAG;
+		}
 		b.date(eventReader.nextEvent().asCharacters().getData());
 		postRead(eventReader);
-		preRead(eventReader);
+		if (!preRead(eventReader)) {
+			return EXPECTED_START_TAG;
+		}
 		b.description(eventReader.nextEvent().asCharacters().getData());
 		readLong(b, eventReader, DESC_EXT);
 		postRead(eventReader);
-		return b.build();
+		return Failable.ofSuccess((RSSTorrent) b.build());
 	}
 
 	private void readLong(DefaultRSSTorrent.Builder b, XMLEventReader eventReader, Extension linkExt)
@@ -181,11 +197,12 @@ public class TorrentsRSSFeed implements RSSFeed {
 		}
 	}
 
-	private void preRead(XMLEventReader eventReader) throws XMLStreamException {
+	private boolean preRead(XMLEventReader eventReader) throws XMLStreamException {
 		XMLEvent nextEvent = eventReader.nextEvent();
 		if (nextEvent.isStartElement()) {
-			return;
+			return true;
 		}
+		return false;
 		// throw new FormatChangedException("Expected start tag");
 	}
 

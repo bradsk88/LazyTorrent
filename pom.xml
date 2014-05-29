@@ -47,5 +47,12 @@
   		<version>8.0-r1</version>
   	</dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>bradj-official</id>
+      <name>BradJ Repo</name>
+      <url>http://boothi.ca/public_html/maven</url>
+    </repository>
+  </repositories>
   <name>LazyTorrent</name>
 </project>

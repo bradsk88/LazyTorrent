@@ -123,7 +123,7 @@ public class Main extends Application {
 					logger);
 			FileToXBMCDaemon fileToXBMCDaemon = new FileToXBMCDaemon();
 			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(logger, m, t);
-			final ScheduledExecutorService logSaveClear = LoggerSaveClear.start(logger);
+			final ScheduledExecutorService logSaveClear = LoggerSaveClear.start(rootG, logger);
 			createTrayIcon(stage, ex, fileMove, logger, logSaveClear);
 			Parent pane = new LazyTorrentsControlPanel(rootG, m, alreadyDownloaded, logger, rss,
 					fileToXBMCDaemon.countDownProperty()).getNode();

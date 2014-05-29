@@ -10,7 +10,7 @@ public class DefaultPreferences extends Record<DefaultPreferences> implements Pr
 
 	private static final String THISDIR = "prefs";
 
-	private DefaultPreferences(Path root, Collection<String> livePrefs) {
+	DefaultPreferences(Path root, Collection<String> livePrefs) {
 		super(root, THISDIR, livePrefs);
 	}
 

@@ -93,12 +93,12 @@ public abstract class Record<R extends Record<R>> {
 		for (String i : livePrefs) {
 			String iL = i.toLowerCase().substring(0, i.length());
 			String nameL = name.toLowerCase();
-			if (nameL.contains(iL)) {
+			if (nameL.startsWith(iL) || nameL.endsWith(iL)) {
 				return true;
 			}
 			if (i.length() > 4) {
 				String iLowMinusExt = i.toLowerCase().substring(0, i.length() - 4);
-				if (nameL.contains(iLowMinusExt)) {
+				if (nameL.startsWith(iLowMinusExt) || nameL.endsWith(iLowMinusExt)) {
 					return true;
 				}
 			}

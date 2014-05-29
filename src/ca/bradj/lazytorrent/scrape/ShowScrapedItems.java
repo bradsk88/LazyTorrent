@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.util.Pair;
 import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.rss.RSSListView;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
@@ -22,7 +23,8 @@ public class ShowScrapedItems implements EventHandler<ActionEvent> {
 
 	@Override
 	public void handle(ActionEvent arg0) {
-		Collection<WithConfidence<RSSTorrent>> candidates = scraper.getDownloadCandidates(rssList.getCurrentItems());
+		Collection<WithConfidence<Pair<RSSTorrent, String>>> candidates = scraper.getDownloadCandidates(rssList
+				.getCurrentItems());
 		listView.setItems(candidates);
 	}
 

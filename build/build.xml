@@ -65,13 +65,18 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="C:\eclipse\plugins">
-				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>	
+			<fileset dir="C:\Users\Brad\Desktop">
+				<filename name="brava.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
 			<fileset dir="C:\Users\Brad\.m2\repository\com\google\guava\guava\17.0">
 				<filename name="guava-17.0.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\eclipse\plugins">
+				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -83,12 +88,12 @@
 		<mkdir dir="project" />
 		<copy todir="project">
 			<fileset dir="C:\Users\Brad\LazyTorrent">
-				<include name="src/**" />
+				<include name="test/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
 			<fileset dir="C:\Users\Brad\LazyTorrent">
-				<include name="test/**" />
+				<include name="src/**" />
 			</fileset>
 		</copy>
 		
@@ -104,6 +109,7 @@
 		<copy todir="build/libs">
 			<fileset dir="externalLibs">
 				<include name="guava-15.0.jar"/>
+				<include name="brava.jar"/>
 				<include name="mockito-core-1.9.5.jar"/>
 				<include name="jfxtras-fxml-8.0-r1.jar"/>
 				<include name="objenesis-1.0.jar"/>
@@ -111,9 +117,9 @@
 				<include name="joda-time-2.3.jar"/>
 				<include name="junit.jar"/>
 				<include name="jfxtras-labs-8.0-r1.jar"/>
-				<include name="guava-17.0.jar"/>
 				<include name="jfxtras-common-8.0-r1.jar"/>
 				<include name="hamcrest-core-1.1.jar"/>
+				<include name="guava-17.0.jar"/>
 				<include name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
 			</fileset>
 		</copy>

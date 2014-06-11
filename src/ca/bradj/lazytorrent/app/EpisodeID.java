@@ -11,6 +11,9 @@ public class EpisodeID {
 
 	private static final Pattern PATTERN = Pattern.compile("[^0-9]*0*([0-9]+)[[xX]|[[eE][^0-9]*]]0*([0-9]+).*");
 	private static final Pattern PATTERN_SEASON = Pattern.compile(".*[^a-zA-Z][sS][^0-9]*([0-9][0-9]?)[^0-9]+.*");
+	private static final Pattern PATTERN_MAYBE = Pattern.compile("^([0-9])([0-9][0-9])");
+	private static final Pattern PATTERN_START = Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})");
+	private static final Pattern PATTERN_DATE = Pattern.compile(".*([0-9][0-9][0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]).*");
 	private static final Failable<EpisodeID> NO_MATCH = Failable.fail("Could not find season pattern (S##E##)");
 	private final int season;
 	private final int episode;
@@ -20,7 +23,24 @@ public class EpisodeID {
 		this.episode = episode;
 	}
 
-	public static Failable<EpisodeID> parse(String alreadyDownloaded) {
+	public static Failable<EpisodeID> parse(String input) {
+
+		String alreadyDownloaded = Torrent.stripJunk(input);
+
+		Matcher start = PATTERN_START.matcher(alreadyDownloaded);
+		if (start.find()) {
+			int season = Integer.parseInt(start.group(1));
+			int episode = Integer.parseInt(start.group(2));
+			EpisodeID epid = EpisodeID.withSeason(season).andEpisode(episode);
+			return Failable.ofSuccess(epid);
+		}
+
+		Matcher dates = PATTERN_DATE.matcher(alreadyDownloaded);
+		if (dates.matches()) {
+			String group = dates.group(1);
+			alreadyDownloaded = alreadyDownloaded.replace(group, "");
+		}
+
 		String[] split = alreadyDownloaded.split("\\.");
 
 		for (String sub : split) {
@@ -28,6 +48,13 @@ public class EpisodeID {
 			if (matcher.matches()) {
 				int season = Integer.parseInt(matcher.group(1));
 				int episode = Integer.parseInt(matcher.group(2));
+				EpisodeID epid = EpisodeID.withSeason(season).andEpisode(episode);
+				return Failable.ofSuccess(epid);
+			}
+			Matcher matcher2 = PATTERN_MAYBE.matcher(sub);
+			if (matcher2.matches()) {
+				int season = Integer.parseInt(matcher2.group(1));
+				int episode = Integer.parseInt(matcher2.group(2));
 				EpisodeID epid = EpisodeID.withSeason(season).andEpisode(episode);
 				return Failable.ofSuccess(epid);
 			}

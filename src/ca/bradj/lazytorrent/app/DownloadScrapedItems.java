@@ -36,7 +36,7 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 	public void doNow() {
 		for (Pair<RSSTorrent, String> i : listView.getLastScrape()) {
 			RSSTorrent torrent = i.getKey();
-			if (alreadyDownloaded.isSameNameAndEpisode(torrent)) {
+			if (alreadyDownloaded.shouldDownload(torrent)) {
 				continue;
 			}
 
@@ -49,7 +49,7 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 							+ i.getValue() + "\"");
 					continue;
 				}
-				logger.log("Failed to download because: " + f.getReason());
+				logger.log("Failed to download " + torrent.getName().substring(0, 40) + " because: " + f.getReason());
 				System.err.println(f.getReason());
 			} catch (MalformedURLException e) {
 				alreadyDownloaded.add(torrent);

@@ -46,6 +46,11 @@
   		<artifactId>jfxtras-labs</artifactId>
   		<version>8.0-r1</version>
   	</dependency>
+  	<dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  		<version>2.4</version>
+  	</dependency>
   </dependencies>
   <repositories>
     <repository>

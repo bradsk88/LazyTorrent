@@ -115,7 +115,8 @@ public class Main extends Application {
 			AlreadyTransferred t = AlreadyTransferred.load(rootG);
 			logger.debug("Opened AlreadyTransferred at " + t.getFilename());
 
-			AlreadyDownloaded alreadyDownloaded = AlreadyDownloaded.load(rootG);
+			AlreadyDownloaded alreadyDownloaded = AlreadyDownloaded.empty();
+			alreadyDownloaded.load(rootG, logger);
 
 			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(), alreadyDownloaded, logger);
 

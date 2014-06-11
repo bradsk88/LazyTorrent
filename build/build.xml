@@ -25,8 +25,18 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\commons-io\commons-io\2.4">
+				<filename name="commons-io-2.4.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
 			<fileset dir="C:\Users\Brad\.m2\repository\org\mockito\mockito-core\1.9.5">
 				<filename name="mockito-core-1.9.5.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\ca\bradj\brava\0.0.1-SNAPSHOT">
+				<filename name="brava-0.0.1-SNAPSHOT.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -62,11 +72,6 @@
 		<copy todir="externalLibs">
 			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-common\8.0-r1">
 				<filename name="jfxtras-common-8.0-r1.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Brad\Desktop">
-				<filename name="brava.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -109,12 +114,13 @@
 		<copy todir="build/libs">
 			<fileset dir="externalLibs">
 				<include name="guava-15.0.jar"/>
-				<include name="brava.jar"/>
 				<include name="mockito-core-1.9.5.jar"/>
+				<include name="brava-0.0.1-SNAPSHOT.jar"/>
 				<include name="jfxtras-fxml-8.0-r1.jar"/>
 				<include name="objenesis-1.0.jar"/>
 				<include name="jfxtras-controls-8.0-r1.jar"/>
 				<include name="joda-time-2.3.jar"/>
+				<include name="commons-io-2.4.jar"/>
 				<include name="junit.jar"/>
 				<include name="jfxtras-labs-8.0-r1.jar"/>
 				<include name="jfxtras-common-8.0-r1.jar"/>

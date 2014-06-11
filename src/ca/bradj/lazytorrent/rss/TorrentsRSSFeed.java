@@ -91,7 +91,7 @@ public class TorrentsRSSFeed implements RSSFeed {
 	protected ObservableList<RSSTorrent> strip(Collection<RSSTorrent> torrents, AlreadyDownloaded alreadyDownloaded2) {
 		ObservableList<RSSTorrent> list = FXCollections.observableArrayList();
 		for (RSSTorrent i : torrents) {
-			if (alreadyDownloaded2.isSameNameAndEpisode(i)) {
+			if (alreadyDownloaded2.hasSameNameAndEpisode(i)) {
 				continue;
 			}
 			list.add(i);

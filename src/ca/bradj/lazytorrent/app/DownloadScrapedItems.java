@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,9 +35,10 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 	}
 
 	public void doNow() {
-		for (Pair<RSSTorrent, String> i : listView.getLastScrape()) {
+		Collection<Pair<RSSTorrent, String>> lastScrape = listView.getLastScrape();
+		for (Pair<RSSTorrent, String> i : lastScrape) {
 			RSSTorrent torrent = i.getKey();
-			if (alreadyDownloaded.shouldDownload(torrent)) {
+			if (!alreadyDownloaded.shouldDownload(torrent)) {
 				continue;
 			}
 
@@ -56,7 +58,6 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 				logger.error(e.getMessage());
 				e.printStackTrace();
 			} catch (IOException e) {
-				alreadyDownloaded.add(torrent);
 				logger.error(e.getMessage());
 				e.printStackTrace();
 			}

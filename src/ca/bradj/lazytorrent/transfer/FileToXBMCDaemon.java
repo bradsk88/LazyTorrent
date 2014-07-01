@@ -1,10 +1,13 @@
 package ca.bradj.lazytorrent.transfer;
 
+import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.google.common.base.Preconditions;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -20,11 +23,13 @@ public class FileToXBMCDaemon {
 	private Logger logger;
 	private TorrentMatchings matchings;
 	private AlreadyTransferred already;
+	protected Path destinationTVFolder;
 
-	public ScheduledExecutorService start(Logger logger, TorrentMatchings matchings, AlreadyTransferred already) {
+	public ScheduledExecutorService start(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destTVFolder) {
 		this.logger = logger;
 		this.matchings = matchings;
 		this.already = already;
+		this.destinationTVFolder = Preconditions.checkNotNull(destTVFolder);
 
 		logger.debug("Starting file transfer service");
 		moveEx.scheduleAtFixedRate(moveTorrentsAndStartCountDown(), 0, 20, TimeUnit.MINUTES);
@@ -58,7 +63,7 @@ public class FileToXBMCDaemon {
 				}, 0, 1, TimeUnit.SECONDS);
 
 				try {
-					new MoveFinishedTorrents(logger, matchings, already).run();
+					new MoveFinishedTorrents(logger, matchings, already, destinationTVFolder).run();
 
 				} catch (Exception e) {
 					e.printStackTrace();

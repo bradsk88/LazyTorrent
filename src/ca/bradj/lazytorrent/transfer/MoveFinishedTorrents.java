@@ -33,9 +33,10 @@ public class MoveFinishedTorrents implements Runnable {
 	private final Logger logger;
 	private final TorrentMatchings prefs;
 	private final AlreadyTransferred alreadyTransferred;
+	private Path destinationTVFolder;
 
-	public MoveFinishedTorrents(Logger logger, TorrentMatchings matchings, AlreadyTransferred already) {
-
+	public MoveFinishedTorrents(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destinationTVFolder) {
+		this.destinationTVFolder = Preconditions.checkNotNull(destinationTVFolder);
 		this.logger = Preconditions.checkNotNull(logger);
 		this.prefs = Preconditions.checkNotNull(matchings);
 		this.alreadyTransferred = Preconditions.checkNotNull(already);
@@ -52,7 +53,7 @@ public class MoveFinishedTorrents implements Runnable {
 			}
 
 			int year = DateTime.now().year().get();
-			File file = new File("\\\\XBMCBUNTU\\media_drive\\TV\\" + year);
+			File file = new File(destinationTVFolder.toFile(), Integer.toString(year));
 			File[] listFiles = FINISHEDFOLDER.toFile().listFiles();
 			for (File i : listFiles) {
 				processFile(file, i);

@@ -66,14 +66,14 @@ public class AlreadyDownloaded {
 		delegate.get(SEEDING_DATE).add(i.getName());
 	}
 
-	public void load(final Path path, final Logger log) {
+	public void load(final Path path, final Path tvDest, final Logger log) {
 		Preconditions.checkNotNull(path);
 		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					getAlreadyDownloaded(path, null, delegate);
+					getAlreadyDownloaded(path, tvDest, delegate);
 				} catch (Exception e) {
 					e.printStackTrace();
 					log.error(e.getMessage());
@@ -86,7 +86,6 @@ public class AlreadyDownloaded {
 	private void getAlreadyDownloaded(Path rootPath, Path destinationPath, Map<Integer, Collection<String>> toFill) {
 		Preconditions.checkNotNull(rootPath);
 
-		// TODO BJ May 19, 2014 Check the download target for downloaded shows.
 		Collection<String> seeding = Lists.newArrayList();
 		File folder = new File(rootPath + File.separator + Torrent.TORRENTS_FOLDERNAME);
 		if (!folder.exists()) {
@@ -103,7 +102,7 @@ public class AlreadyDownloaded {
 		int thisYear = DateTime.now().getYear();
 		Collection<Pair<Integer, File>> yearsToCheck = Lists.newArrayList();
 		for (int i = thisYear; i > thisYear - 100; i--) {
-			File yearFolder = new File("\\\\Xbmcbuntu\\media_drive\\TV" + File.separator + i);
+			File yearFolder = new File(destinationPath.toFile(),Integer.toString(i));
 			if (yearFolder.exists()) {
 				yearsToCheck.add(new Pair<>(i, yearFolder));
 			}

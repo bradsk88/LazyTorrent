@@ -40,22 +40,27 @@ import ca.bradj.lazytorrent.rss.TorrentsRSSFeed;
 import ca.bradj.lazytorrent.transfer.AlreadyTransferred;
 import ca.bradj.lazytorrent.transfer.FileToXBMCDaemon;
 
+@SuppressWarnings("restriction")
 public class Main extends Application {
 
 	private static final String USER_CONFIG_FILE = "userconfig";
-	private static final String CONFIG_FILE = getAppDataDir() + File.separator + getDotIfNeeded() + "LazyTorrent"
-			+ File.separator + "config";
+	private static final String CONFIG_FILE = getAppDataDir() + File.separator
+			+ getDotIfNeeded() + "LazyTorrent" + File.separator + "config";
 	private static final String NOTIFICATION = "Notification";
 	private static final Image NORMAL_IMAGE;
 	private static final Image ERROR_IMAGE;
 	protected static final String RECORDED = "Recorded logs to %APPDATA/LazyTorrent/logs";
 	private static final javafx.scene.image.Image APP_ICON = tryLoadFXImage("normal.png");
-	private static final Failable<Path> USER_CANCELLED = Failable.fail("Cancelled by user");
+	private static final Failable<Path> USER_CANCELLED = Failable
+			.fail("Cancelled by user");
 	@SuppressWarnings("rawtypes")
-	private static final Failable NO_CONFIG_YET = Failable.fail("System configuration does not yet exist.");
+	private static final Failable NO_CONFIG_YET = Failable
+			.fail("System configuration does not yet exist.");
 	@SuppressWarnings("rawtypes")
-	private static final Failable NO_USER_CONFIG_YET = Failable.fail("User configuration does not yet exist.");
-	private static final Failable<String> EMPTY_URL = Failable.fail("User provided empty torrent URL");
+	private static final Failable NO_USER_CONFIG_YET = Failable
+			.fail("User configuration does not yet exist.");
+	private static final Failable<String> EMPTY_URL = Failable
+			.fail("User provided empty torrent URL");
 	static {
 		ERROR_IMAGE = tryLoadImage("error.png");
 		NORMAL_IMAGE = tryLoadImage("normal.png");
@@ -81,7 +86,8 @@ public class Main extends Application {
 		if (OS.contains("WIN"))
 			return System.getenv("APPDATA");
 		else if (OS.contains("MAC"))
-			return System.getProperty("user.home") + "/Library/Application " + "Support";
+			return System.getProperty("user.home") + "/Library/Application "
+					+ "Support";
 		else if (OS.contains("NUX"))
 			return System.getProperty("user.home");
 		return System.getProperty("user.dir");
@@ -97,13 +103,20 @@ public class Main extends Application {
 			stage.show();
 			Logger logger = new SimpleLogger();
 
-			Failable<Path> root = getRoot(stage, logger);
+			Failable<Path> root = getDest(stage, logger, "root");
 			if (root.isFailure()) {
 				stage.close();
 				System.exit(0);
 			}
 			Path rootG = root.get();
 
+			Failable<Path> tvd = getDest(stage, logger, "tvdest");
+			if (tvd.isFailure()) {
+				stage.close();
+				System.exit(0);
+			}
+			Path tvDest = tvd.get();
+			
 			Failable<String> torrentsURL = getTorrentFeedURL(rootG);
 			if (torrentsURL.isFailure()) {
 				stage.close();
@@ -116,17 +129,21 @@ public class Main extends Application {
 			logger.debug("Opened AlreadyTransferred at " + t.getFilename());
 
 			AlreadyDownloaded alreadyDownloaded = AlreadyDownloaded.empty();
-			alreadyDownloaded.load(rootG, logger);
+			alreadyDownloaded.load(rootG, tvDest, logger);
 
-			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(), alreadyDownloaded, logger);
+			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(),
+					alreadyDownloaded, logger);
 
-			final ScheduledExecutorService ex = DownloadDaemon.start(rootG, rss, m.getPreferences(), alreadyDownloaded,
-					logger);
+			final ScheduledExecutorService ex = DownloadDaemon.start(rootG,
+					rss, m.getPreferences(), alreadyDownloaded, logger);
 			FileToXBMCDaemon fileToXBMCDaemon = new FileToXBMCDaemon();
-			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(logger, m, t);
-			final ScheduledExecutorService logSaveClear = LoggerSaveClear.start(rootG, logger);
+			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(
+					logger, m, t, tvDest);
+			final ScheduledExecutorService logSaveClear = LoggerSaveClear
+					.start(rootG, logger);
 			createTrayIcon(stage, ex, fileMove, logger, logSaveClear);
-			Parent pane = new LazyTorrentsControlPanel(rootG, m, alreadyDownloaded, logger, rss,
+			Parent pane = new LazyTorrentsControlPanel(rootG, m,
+					alreadyDownloaded, logger, rss,
 					fileToXBMCDaemon.countDownProperty()).getNode();
 			Scene scene = new Scene(pane, 1024, 768);
 			stage.setOpacity(1.0);
@@ -153,7 +170,8 @@ public class Main extends Application {
 				return EMPTY_URL;
 			}
 			File userconf = new File(root + File.separator + USER_CONFIG_FILE);
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(userconf))) {
+			try (BufferedWriter bw = new BufferedWriter(
+					new FileWriter(userconf))) {
 				bw.write(answer.get());
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -167,7 +185,8 @@ public class Main extends Application {
 		File userconf = new File(root + File.separator + USER_CONFIG_FILE);
 		if (userconf.exists()) {
 
-			try (BufferedReader br = new BufferedReader(new FileReader(userconf))) {
+			try (BufferedReader br = new BufferedReader(
+					new FileReader(userconf))) {
 				String s = br.readLine();
 				if (s.isEmpty()) {
 					return NO_USER_CONFIG_YET;
@@ -180,14 +199,14 @@ public class Main extends Application {
 		return NO_USER_CONFIG_YET;
 	}
 
-	private Failable<Path> getRoot(Stage stage, Logger logger) {
+	private Failable<Path> getDest(Stage stage, Logger logger, String prefix) {
 
-		Failable<Path> existingRoot = getExistingRoot();
-		if (existingRoot.isSuccess()) {
-			return existingRoot;
+		Failable<Path> existingTVDest = getExistingDest(prefix);
+		if (existingTVDest.isSuccess()) {
+			return existingTVDest;
 		}
 
-		logger.debug(existingRoot.getReason() + " -- Prompting user.");
+		logger.debug(existingTVDest.getReason() + " -- Prompting user.");
 
 		DirectoryChooser fc = new DirectoryChooser();
 		File file = fc.showDialog(stage.getOwner());
@@ -210,14 +229,21 @@ public class Main extends Application {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Failable<Path> getExistingRoot() {
+	private Failable<Path> getExistingDest(String prefix) {
 		File rootQ = new File(CONFIG_FILE);
 		if (rootQ.exists()) {
 
 			try (BufferedReader br = new BufferedReader(new FileReader(rootQ))) {
-				File potential = new File(br.readLine());
-				if (potential.exists()) {
-					return Failable.ofSuccess(potential.toPath());
+
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					String split[] = line.split("-");
+					if (prefix.equals(split[0])) {
+						File potential = new File(line);
+						if (potential.exists()) {
+							return Failable.ofSuccess(potential.toPath());
+						}
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -226,8 +252,10 @@ public class Main extends Application {
 		return NO_CONFIG_YET;
 	}
 
-	public void createTrayIcon(final Stage stage, final ScheduledExecutorService exec,
-			final ScheduledExecutorService fileMove, Logger logger, final ScheduledExecutorService logSaveClear) {
+	public void createTrayIcon(final Stage stage,
+			final ScheduledExecutorService exec,
+			final ScheduledExecutorService fileMove, Logger logger,
+			final ScheduledExecutorService logSaveClear) {
 		if (SystemTray.isSupported()) {
 			// get the SystemTray instance
 			SystemTray tray = SystemTray.getSystemTray();
@@ -300,7 +328,8 @@ public class Main extends Application {
 				FXThreading.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						trayIcon.displayMessage(NOTIFICATION, string, MessageType.INFO);
+						trayIcon.displayMessage(NOTIFICATION, string,
+								MessageType.INFO);
 					}
 				});
 			}
@@ -325,7 +354,8 @@ public class Main extends Application {
 
 			@Override
 			public void bufferCleared() {
-				trayIcon.displayMessage(NOTIFICATION, RECORDED, MessageType.INFO);
+				trayIcon.displayMessage(NOTIFICATION, RECORDED,
+						MessageType.INFO);
 			}
 
 			@Override
@@ -346,7 +376,8 @@ public class Main extends Application {
 
 	private static javafx.scene.image.Image tryLoadFXImage(String string) {
 		try {
-			return new javafx.scene.image.Image(Main.class.getResourceAsStream(string));
+			return new javafx.scene.image.Image(
+					Main.class.getResourceAsStream(string));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -355,7 +386,8 @@ public class Main extends Application {
 
 	public void showProgramIsMinimizedMsg() {
 		if (firstTime) {
-			trayIcon.displayMessage("Running in background.", "Will download new torrents automatically.",
+			trayIcon.displayMessage("Running in background.",
+					"Will download new torrents automatically.",
 					TrayIcon.MessageType.INFO);
 			firstTime = false;
 		}

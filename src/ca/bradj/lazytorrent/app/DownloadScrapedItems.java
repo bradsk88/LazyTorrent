@@ -18,6 +18,8 @@ import ca.bradj.lazytorrent.connection.Torrent;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.lazytorrent.scrape.ScrapeListView;
 
+import com.google.common.base.Preconditions;
+
 public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 
 	private final ScrapedItemsProvider listView;

@@ -24,12 +24,14 @@ public class FileToXBMCDaemon {
 	private TorrentMatchings matchings;
 	private AlreadyTransferred already;
 	protected Path destinationTVFolder;
+	protected Path finishedTorrentsDir;
 
-	public ScheduledExecutorService start(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destTVFolder) {
+	public ScheduledExecutorService start(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destTVFolder, Path finishedDir) {
 		this.logger = logger;
 		this.matchings = matchings;
 		this.already = already;
 		this.destinationTVFolder = Preconditions.checkNotNull(destTVFolder);
+		this.finishedTorrentsDir = Preconditions.checkNotNull(finishedDir);
 
 		logger.debug("Starting file transfer service");
 		moveEx.scheduleAtFixedRate(moveTorrentsAndStartCountDown(), 0, 20, TimeUnit.MINUTES);
@@ -63,7 +65,7 @@ public class FileToXBMCDaemon {
 				}, 0, 1, TimeUnit.SECONDS);
 
 				try {
-					new MoveFinishedTorrents(logger, matchings, already, destinationTVFolder).run();
+					new MoveFinishedTorrents(logger, matchings, already, destinationTVFolder, finishedTorrentsDir).run();
 
 				} catch (Exception e) {
 					e.printStackTrace();

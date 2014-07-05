@@ -9,6 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 
 import ca.bradj.common.base.Failable;
+import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.app.Config;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.matching.TorrentMatch;
@@ -26,6 +28,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public class MoveFinishedTorrents implements Runnable {
 
@@ -34,16 +37,18 @@ public class MoveFinishedTorrents implements Runnable {
 	private final AlreadyTransferred alreadyTransferred;
 	private Path destinationTVFolder;
 	private Path finishedfolder;
+	private final String unrarCommand;
 
 	public MoveFinishedTorrents(Logger logger, TorrentMatchings matchings,
 			AlreadyTransferred already, Path destinationTVFolder,
-			Path finishedTorrentsDir) {
+			Path finishedTorrentsDir, String unrarCmd) {
 		this.destinationTVFolder = Preconditions
 				.checkNotNull(destinationTVFolder);
 		this.logger = Preconditions.checkNotNull(logger);
 		this.prefs = Preconditions.checkNotNull(matchings);
 		this.alreadyTransferred = Preconditions.checkNotNull(already);
 		this.finishedfolder = Preconditions.checkNotNull(finishedTorrentsDir);
+		this.unrarCommand = Preconditions2.checkNotEmpty(unrarCmd);
 	}
 
 	@Override
@@ -165,10 +170,18 @@ public class MoveFinishedTorrents implements Runnable {
 	private Failable<File> unrar(File f, MoveInfo moveInfo) {
 
 		try {
-			String command = "\"C:" + File.separator + "Program Files"
-					+ File.separator + "WinRAR" + File.separator
-					+ "unrar.exe\" x -o+ \"" + f.getAbsolutePath() + "\" \""
-					+ f.getParent() + "\"";
+			// String command = "\"C:" + File.separator + "Program Files"
+			// + File.separator + "WinRAR" + File.separator
+			// + "unrar.exe\" x -o+ \"" + f.getAbsolutePath() + "\" \""
+			// + f.getParent() + "\"";
+			String command = unrarCommand + " " + f.getAbsolutePath();
+			if (command.contains("%RARFILE%")) {
+				command = unrarCommand
+						.replace("%RARFILE%", f.getAbsolutePath());
+			}
+			if (command.contains("%RARFOLDER%")) {
+				command = command.replace("%RARFOLDER%", f.getParent());
+			}
 			File parent = f.getParentFile();
 			Process exec = Runtime.getRuntime().exec(command);
 			logger.debug("Command is : " + command);
@@ -192,7 +205,7 @@ public class MoveFinishedTorrents implements Runnable {
 
 				if (directoryContainsIncompleteSetOfRARFiles(parent)) {
 					return Failable
-							.fail("Directory contains incomple set of RAR files: "
+							.fail("Directory contains incomplete set of RAR files: "
 									+ parent);
 				}
 
@@ -235,8 +248,9 @@ public class MoveFinishedTorrents implements Runnable {
 
 		int expectedNumber = 0;
 		boolean gapped = false;
-
-		for (File i : parent.listFiles()) {
+		File[] listFiles = parent.listFiles();
+		Collection<File> sortedListFiles = Ordering.<File>natural().sortedCopy(Lists.newArrayList(listFiles));
+		for (File i : sortedListFiles) {
 			if (i.getPath().endsWith("\\.rar")) {
 				continue;
 			}

@@ -15,4 +15,5 @@ public interface AppConfig {
 
 	String getTorrentCommand();
 
+
 }

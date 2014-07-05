@@ -137,6 +137,13 @@ public class Main extends Application {
 			}
 			String torrentCommand = torrentCMD.get();
 			
+			Failable<String> unrarCMD = getStringFromUser(rootG, "unrarcmd", "Unrar command (eg: \"C:\\Program Files\\...\\unrar.exe\")", false);
+			if (unrarCMD.isFailure()) {
+				stage.close();
+				System.exit(0);
+			}
+			String unrarCommand = unrarCMD.get();
+			
 			TorrentMatchings m = TorrentMatchings.load(rootG);
 			logger.debug("Opened TorrentMatchings at " + m.getFile());
 
@@ -155,7 +162,7 @@ public class Main extends Application {
 					appConfig);
 			FileToXBMCDaemon fileToXBMCDaemon = new FileToXBMCDaemon();
 			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(
-					logger, m, t, tvDest, finishedTorrents);
+					logger, m, t, tvDest, finishedTorrents, unrarCommand);
 			final ScheduledExecutorService logSaveClear = LoggerSaveClear
 					.start(rootG, logger);
 			createTrayIcon(stage, ex, fileMove, logger, logSaveClear);

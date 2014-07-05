@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="SuperLazy.jar" size="113332" download="eager" />
+    <jar href="SuperLazy.jar" size="113269" download="eager" />
     <jar href="libs/brava-0.0.1-SNAPSHOT.jar" size="11423" download="eager" />
     <jar href="libs/commons-io-2.4.jar" size="185140" download="eager" />
     <jar href="libs/guava-17.0.jar" size="2243036" download="eager" />

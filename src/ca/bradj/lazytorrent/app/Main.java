@@ -95,6 +95,10 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		
+		System.out.println("Waiting for Display");
+		Thread.sleep(5000);
+		
 		stage.getIcons().add(APP_ICON);
 		firstTime = true;
 		Platform.setImplicitExit(false);
@@ -429,12 +433,12 @@ public class Main extends Application {
 	}
 
 	public void showProgramIsMinimizedMsg() {
-		if (firstTime) {
-			trayIcon.displayMessage("Running in background.",
-					"Will download new torrents automatically.",
-					TrayIcon.MessageType.INFO);
-			firstTime = false;
-		}
+//		if (firstTime) {
+//			trayIcon.displayMessage("Running in background.",
+//					"Will download new torrents automatically.",
+//					TrayIcon.MessageType.INFO);
+//			firstTime = false;
+//		}
 	}
 
 	private void hide(final Stage stage) {

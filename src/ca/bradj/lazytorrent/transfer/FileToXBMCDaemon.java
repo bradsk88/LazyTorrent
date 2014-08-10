@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.matching.TorrentMatchings;
 import ca.bradj.lazytorrent.rss.FXThreading;
@@ -24,15 +25,19 @@ public class FileToXBMCDaemon {
 	private TorrentMatchings matchings;
 	private AlreadyTransferred already;
 	protected Path destinationTVFolder;
+	protected Path finishedTorrentsDir;
+	private String unrarCommand;
 
-	public ScheduledExecutorService start(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destTVFolder) {
+	public ScheduledExecutorService start(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destTVFolder, Path finishedDir, String unrarCmd) {
 		this.logger = logger;
 		this.matchings = matchings;
 		this.already = already;
 		this.destinationTVFolder = Preconditions.checkNotNull(destTVFolder);
+		this.finishedTorrentsDir = Preconditions.checkNotNull(finishedDir);
+		this.unrarCommand = Preconditions2.checkNotEmpty(unrarCmd);
 
 		logger.debug("Starting file transfer service");
-		moveEx.scheduleAtFixedRate(moveTorrentsAndStartCountDown(), 0, 20, TimeUnit.MINUTES);
+		moveEx.scheduleAtFixedRate(moveTorrentsAndStartCountDown(), 10, 20*60, TimeUnit.SECONDS);
 		return moveEx;
 	}
 
@@ -63,7 +68,7 @@ public class FileToXBMCDaemon {
 				}, 0, 1, TimeUnit.SECONDS);
 
 				try {
-					new MoveFinishedTorrents(logger, matchings, already, destinationTVFolder).run();
+					new MoveFinishedTorrents(logger, matchings, already, destinationTVFolder, finishedTorrentsDir, unrarCommand).run();
 
 				} catch (Exception e) {
 					e.printStackTrace();

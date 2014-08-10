@@ -56,8 +56,8 @@ public class Torrent {
 		return pathName + File.separator + fileEnd;
 	}
 
-	public static void openAndStart(File file, Logger logger) {
-		Result ofFile = OpenTorrent.ofFile(file);
+	public static void openAndStart(File file, Logger logger, String torrentCommand) {
+		Result ofFile = OpenTorrent.ofFile(file, torrentCommand);
 		if (ofFile.isFailure()) {
 			logger.error(ofFile.getReason());
 		}

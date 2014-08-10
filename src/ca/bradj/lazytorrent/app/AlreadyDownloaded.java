@@ -108,9 +108,17 @@ public class AlreadyDownloaded {
 			}
 		}
 		double i = 0;
+		final double fi = i;
 		double total = yearsToCheck.size();
 		for (Pair<Integer, File> year : yearsToCheck) {
-			loadProgress.set(i / total);
+			FXThreading.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					loadProgress.set(fi / total);
+				}
+				
+			});
 			Set<String> yearShows = Sets.newHashSet();
 			for (File f : year.getValue().listFiles()) {
 				yearShows.addAll(getShowNames(f, f.getName()));

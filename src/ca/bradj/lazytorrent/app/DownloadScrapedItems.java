@@ -7,26 +7,33 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
+import com.google.common.base.Preconditions;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.Pair;
 import ca.bradj.common.base.Failable;
+import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.connection.Torrent;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
+import ca.bradj.lazytorrent.scrape.ScrapeListView;
+import com.google.common.base.Preconditions;
 
 public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 
 	private final ScrapedItemsProvider listView;
-	private final AlreadyDownloaded alreadyDownloaded;
 	private final Logger logger;
 	private final Path currentTorrentsDir;
+	private final String torrentCommand;
+	private final AlreadyDownloaded alreadyDownloaded;
 
-	public DownloadScrapedItems(Path root, ScrapedItemsProvider listView, AlreadyDownloaded alreadyDownloaded,
-			Logger logger) {
-		this.listView = listView;
-		this.alreadyDownloaded = alreadyDownloaded;
-		this.logger = logger;
-		this.currentTorrentsDir = Paths.get(root + File.separator + Torrent.TORRENTS_FOLDERNAME);
+	public DownloadScrapedItems(AppConfig appConfig, ScrapedItemsProvider items,
+			Logger logger2) {
+		this.currentTorrentsDir = Paths.get(appConfig.getRoot()+ File.separator + Torrent.TORRENTS_FOLDERNAME);
+		this.listView = Preconditions.checkNotNull(items);
+		this.logger = Preconditions.checkNotNull(logger2);
+		this.alreadyDownloaded = appConfig.getAlreadyDownloaded();
+		this.torrentCommand = appConfig.getTorrentCommand();
 	}
 
 	@Override
@@ -45,7 +52,7 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 			try {
 				Failable<File> f = Torrent.download(currentTorrentsDir, torrent);
 				if (f.isSuccess()) {
-					Torrent.openAndStart(f.get(), logger);
+					Torrent.openAndStart(f.get(), logger, torrentCommand);
 					alreadyDownloaded.add(torrent);
 					logger.log("Succesfully opened: \"" + f.get().getName() + "\" because it matched: \""
 							+ i.getValue() + "\"");

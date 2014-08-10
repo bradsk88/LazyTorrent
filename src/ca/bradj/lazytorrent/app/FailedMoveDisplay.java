@@ -8,7 +8,7 @@ public class FailedMoveDisplay {
 
 	private final ListView<String> node;
 
-	public FailedMoveDisplay(ObservableList<String> collection, @SuppressWarnings("unused") Logger logger) {
+	public FailedMoveDisplay(ObservableList<String> collection) {
 		this.node = new ListView<>();
 		this.node.setItems(collection);
 	}

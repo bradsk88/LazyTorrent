@@ -83,8 +83,7 @@ public class PreferenceScrape {
 			return out;
 		}
 
-		Failable<WithConfidence<Pair<RSSTorrent, String>>> inRange = findInFileSizeRange(matches, LOWEST_FILE,
-				UPPER_FILE_1080P);
+		Failable<WithConfidence<Pair<RSSTorrent, String>>> inRange = findInFileSizeRange();
 		if (inRange.isSuccess()) {
 			lastMatch = Optional.of(getMostConfident(lastMatch, inRange.get()));
 			lastConfidence = lastMatch.get().getConfidence();
@@ -119,8 +118,7 @@ public class PreferenceScrape {
 	}
 
 	@SuppressWarnings("unused")
-	private Failable<WithConfidence<Pair<RSSTorrent, String>>> findInFileSizeRange(
-			Collection<Pair<RSSTorrent, String>> matches, int i, int j) {
+	private Failable<WithConfidence<Pair<RSSTorrent, String>>> findInFileSizeRange() {
 		return SIZE_NOT_REPORTED;
 	}
 
@@ -134,7 +132,7 @@ public class PreferenceScrape {
 			Pair<RSSTorrent, String> next = matches480p.iterator().next();
 			return Failable.ofSuccess(WithConfidence.high(next));
 		}
-		return tryX264OrFilesizeElseChooseArbitrarily(matches480p, LOWER_FILE_1080P, UPPER_FILE_1080P);
+		return tryX264OrFilesizeElseChooseArbitrarily(matches480p);
 	}
 
 	private Failable<WithConfidence<Pair<RSSTorrent, String>>> find720pVersion(
@@ -147,7 +145,7 @@ public class PreferenceScrape {
 			Pair<RSSTorrent, String> next = matches720p.iterator().next();
 			return Failable.ofSuccess(WithConfidence.high(next));
 		}
-		return tryX264OrFilesizeElseChooseArbitrarily(matches720p, LOWER_FILE_1080P, UPPER_FILE_1080P);
+		return tryX264OrFilesizeElseChooseArbitrarily(matches720p);
 	}
 
 	private Failable<WithConfidence<Pair<RSSTorrent, String>>> find1080pVersion(
@@ -160,15 +158,15 @@ public class PreferenceScrape {
 			Pair<RSSTorrent, String> next = matches1080p.iterator().next();
 			return Failable.ofSuccess(WithConfidence.high(next));
 		}
-		return tryX264OrFilesizeElseChooseArbitrarily(matches1080p, LOWER_FILE_1080P, UPPER_FILE_1080P);
+		return tryX264OrFilesizeElseChooseArbitrarily(matches1080p);
 
 	}
 
 	private Failable<WithConfidence<Pair<RSSTorrent, String>>> tryX264OrFilesizeElseChooseArbitrarily(
-			Collection<Pair<RSSTorrent, String>> matches, int lowerSize, int upperSize) {
+			Collection<Pair<RSSTorrent, String>> matches) {
 		Collection<Pair<RSSTorrent, String>> matchesX264 = doFindMatches(matches, X264);
 		if (matchesX264.isEmpty()) {
-			return tryFilesizeElseChooseArbitrarily(matches, lowerSize, upperSize);
+			return tryFilesizeElseChooseArbitrarily(matches);
 		}
 		Pair<RSSTorrent, String> first = Iterables.getFirst(matches, null);
 		return Failable.ofSuccess(WithConfidence.medium(first));
@@ -176,7 +174,7 @@ public class PreferenceScrape {
 
 	@SuppressWarnings("unused")
 	private Failable<WithConfidence<Pair<RSSTorrent, String>>> tryFilesizeElseChooseArbitrarily(
-			Collection<Pair<RSSTorrent, String>> matches, int lowerSize, int upperSize) {
+			Collection<Pair<RSSTorrent, String>> matches) {
 		Pair<RSSTorrent, String> first = Iterables.getFirst(matches, null);
 		return Failable.ofSuccess(WithConfidence.medium(first));
 	}

@@ -9,6 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 
 import ca.bradj.common.base.Failable;
+import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.app.Config;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.matching.TorrentMatch;
@@ -26,20 +28,27 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public class MoveFinishedTorrents implements Runnable {
 
-	private static final Path FINISHEDFOLDER = FileSystems.getDefault().getPath("D:\\Done");
 	private final Logger logger;
 	private final TorrentMatchings prefs;
 	private final AlreadyTransferred alreadyTransferred;
 	private Path destinationTVFolder;
+	private Path finishedfolder;
+	private final String unrarCommand;
 
-	public MoveFinishedTorrents(Logger logger, TorrentMatchings matchings, AlreadyTransferred already, Path destinationTVFolder) {
-		this.destinationTVFolder = Preconditions.checkNotNull(destinationTVFolder);
+	public MoveFinishedTorrents(Logger logger, TorrentMatchings matchings,
+			AlreadyTransferred already, Path destinationTVFolder,
+			Path finishedTorrentsDir, String unrarCmd) {
+		this.destinationTVFolder = Preconditions
+				.checkNotNull(destinationTVFolder);
 		this.logger = Preconditions.checkNotNull(logger);
 		this.prefs = Preconditions.checkNotNull(matchings);
 		this.alreadyTransferred = Preconditions.checkNotNull(already);
+		this.finishedfolder = Preconditions.checkNotNull(finishedTorrentsDir);
+		this.unrarCommand = Preconditions2.checkNotEmpty(unrarCmd);
 	}
 
 	@Override
@@ -47,14 +56,16 @@ public class MoveFinishedTorrents implements Runnable {
 
 		try {
 
-			if (Files.notExists(FINISHEDFOLDER)) {
-				logger.notification(FINISHEDFOLDER.toString() + " didn't exist.  Cannot manage files.");
+			if (Files.notExists(finishedfolder)) {
+				logger.notification(finishedfolder.toString()
+						+ " didn't exist.  Cannot manage files.");
 				return;
 			}
 
 			int year = DateTime.now().year().get();
-			File file = new File(destinationTVFolder.toFile(), Integer.toString(year));
-			File[] listFiles = FINISHEDFOLDER.toFile().listFiles();
+			File file = new File(destinationTVFolder.toFile(),
+					Integer.toString(year));
+			File[] listFiles = finishedfolder.toFile().listFiles();
 			for (File i : listFiles) {
 				processFile(file, i);
 			}
@@ -85,7 +96,8 @@ public class MoveFinishedTorrents implements Runnable {
 				return;
 			}
 			prefs.addUnmovable(i.getName());
-			logger.error("Error: Couldn't assign show name to " + i.getName() + ". [" + showName.getReason() + "]");
+			logger.error("Error: Couldn't assign show name to " + i.getName()
+					+ ". [" + showName.getReason() + "]");
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -93,14 +105,16 @@ public class MoveFinishedTorrents implements Runnable {
 		}
 	}
 
-	private void moveFile(File destPath, File i, String showName, String upperName) {
+	private void moveFile(File destPath, File i, String showName,
+			String upperName) {
 
-		MoveInfo moveInfo = MoveInfo.create().destinationFolder(destPath).showName(showName).upperName(upperName)
-				.build();
+		MoveInfo moveInfo = MoveInfo.create().destinationFolder(destPath)
+				.showName(showName).upperName(upperName).build();
 
 		if (i.isDirectory()) {
 			if (directoryContainsIncompleteSetOfRARFiles(i)) {
-				logger.error("Directory contains incomple set of RAR files: " + i);
+				logger.error("Directory contains incomple set of RAR files: "
+						+ i);
 				return;
 			}
 			for (File f : i.listFiles()) {
@@ -112,7 +126,8 @@ public class MoveFinishedTorrents implements Runnable {
 			return;
 		}
 		if (isMoveType(i)) {
-			File destination = new File(destPath.getPath() + File.separator + showName + File.separator + i.getName());
+			File destination = new File(destPath.getPath() + File.separator
+					+ showName + File.separator + i.getName());
 			if (Files.exists(destination.toPath())) {
 				return;
 			}
@@ -121,13 +136,15 @@ public class MoveFinishedTorrents implements Runnable {
 	}
 
 	@SuppressWarnings("unused")
-	private Optional<Failable<File>> unRARAndMove(MoveInfo moveInfo, File file, boolean isNested) {
+	private Optional<Failable<File>> unRARAndMove(MoveInfo moveInfo, File file,
+			boolean isNested) {
 
 		// flip a coin. If heads, unrar this file and check if it
 		// needs to be sent to the server. This random aspect is
 		// just here to reduce disk usage. The file WILL eventually
 		// be transferred.
-		if (!isNested && Config.ALLOW_TRANSFER_RANDOMIZATION && new Random().nextBoolean()) {
+		if (!isNested && Config.ALLOW_TRANSFER_RANDOMIZATION
+				&& new Random().nextBoolean()) {
 			return Optional.absent();
 		}
 
@@ -153,14 +170,25 @@ public class MoveFinishedTorrents implements Runnable {
 	private Failable<File> unrar(File f, MoveInfo moveInfo) {
 
 		try {
-			String command = "\"C:" + File.separator + "Program Files" + File.separator + "WinRAR" + File.separator
-					+ "unrar.exe\" x -o+ \"" + f.getAbsolutePath() + "\" \"" + f.getParent() + "\"";
+			// String command = "\"C:" + File.separator + "Program Files"
+			// + File.separator + "WinRAR" + File.separator
+			// + "unrar.exe\" x -o+ \"" + f.getAbsolutePath() + "\" \""
+			// + f.getParent() + "\"";
+			String command = unrarCommand + " " + f.getAbsolutePath();
+			if (command.contains("%RARFILE%")) {
+				command = unrarCommand
+						.replace("%RARFILE%", f.getAbsolutePath());
+			}
+			if (command.contains("%RARFOLDER%")) {
+				command = command.replace("%RARFOLDER%", f.getParent());
+			}
 			File parent = f.getParentFile();
 			Process exec = Runtime.getRuntime().exec(command);
 			logger.debug("Command is : " + command);
 			logger.debug("Waiting for " + f.getName() + " unrar to complete");
 			try (@SuppressWarnings("resource")
-			BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()))) {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					exec.getInputStream()))) {
 				String line = reader.readLine();
 				while (line != null) {
 					if (line.trim().startsWith("...")) {
@@ -176,23 +204,28 @@ public class MoveFinishedTorrents implements Runnable {
 				logger.debug("Unrar of " + f.getName() + " complete");
 
 				if (directoryContainsIncompleteSetOfRARFiles(parent)) {
-					return Failable.fail("Directory contains incomple set of RAR files: " + parent);
+					return Failable
+							.fail("Directory contains incomplete set of RAR files: "
+									+ parent);
 				}
 
-				ArrayList<File> listFiles = Lists.newArrayList(parent.listFiles());
+				ArrayList<File> listFiles = Lists.newArrayList(parent
+						.listFiles());
 				for (File i : Iterables.filter(listFiles, isNot(f))) {
 					if (isMoveType(i)) {
 						return Failable.ofSuccess(i);
 					}
 					if (isRAR(i)) {
 						// nested RARs
-						Optional<Failable<File>> moved = unRARAndMove(moveInfo, i, true);
+						Optional<Failable<File>> moved = unRARAndMove(moveInfo,
+								i, true);
 						if (moved.isPresent()) {
 							return moved.get();
 						}
 					}
 				}
-				return Failable.fail("Unrarred " + f.getName() + ", but valid file not present");
+				return Failable.fail("Unrarred " + f.getName()
+						+ ", but valid file not present");
 			}
 		} catch (Exception e) {
 			logger.notification(e.getMessage());
@@ -215,8 +248,9 @@ public class MoveFinishedTorrents implements Runnable {
 
 		int expectedNumber = 0;
 		boolean gapped = false;
-
-		for (File i : parent.listFiles()) {
+		File[] listFiles = parent.listFiles();
+		Collection<File> sortedListFiles = Ordering.<File>natural().sortedCopy(Lists.newArrayList(listFiles));
+		for (File i : sortedListFiles) {
 			if (i.getPath().endsWith("\\.rar")) {
 				continue;
 			}
@@ -276,9 +310,12 @@ public class MoveFinishedTorrents implements Runnable {
 		if (Files.notExists(dest.getParentFile().toPath())) {
 			dest.getParentFile().mkdirs();
 		}
-		try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {
-			logger.notification("Transferring file " + src.getName() + " to " + dest.getAbsolutePath());
-			fos.getChannel().transferFrom(fis.getChannel(), 0, fis.getChannel().size());
+		try (FileInputStream fis = new FileInputStream(src);
+				FileOutputStream fos = new FileOutputStream(dest)) {
+			logger.notification("Transferring file " + src.getName() + " to "
+					+ dest.getAbsolutePath());
+			fos.getChannel().transferFrom(fis.getChannel(), 0,
+					fis.getChannel().size());
 			logger.log("Transfer ended for " + src.getName());
 		} catch (Exception e) {
 			logger.notification(e.getMessage());

@@ -40,6 +40,7 @@ import ca.bradj.lazytorrent.rss.TorrentsRSSFeed;
 import ca.bradj.lazytorrent.transfer.AlreadyTransferred;
 import ca.bradj.lazytorrent.transfer.FileToXBMCDaemon;
 
+@SuppressWarnings("restriction")
 public class Main extends Application {
 
 	private static final String USER_CONFIG_FILE = "userconfig";
@@ -89,6 +90,10 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+
+		System.out.println("Waiting for Display");
+		Thread.sleep(5000);
+
 		stage.getIcons().add(APP_ICON);
 		firstTime = true;
 		Platform.setImplicitExit(false);
@@ -97,18 +102,49 @@ public class Main extends Application {
 			stage.show();
 			Logger logger = new SimpleLogger();
 
-			Failable<Path> root = getRoot(stage, logger);
+			Failable<Path> root = getDest(stage, logger, "root", true);
 			if (root.isFailure()) {
 				stage.close();
 				System.exit(0);
 			}
 			Path rootG = root.get();
 
-			Failable<String> torrentsURL = getTorrentFeedURL(rootG);
+			Failable<Path> tvd = getDest(stage, logger, "tvdest", false);
+			if (tvd.isFailure()) {
+				stage.close();
+				System.exit(0);
+			}
+			Path tvDest = tvd.get();
+
+			Failable<Path> fin = getDest(stage, logger, "finishedtorrents", false);
+			if (fin.isFailure()) {
+				stage.close();
+				System.exit(0);
+			}
+			Path finishedTorrents = fin.get();
+
+			Failable<String> torrentsURL = getStringFromUser(rootG, "feedurl", "RSS Feed URL", true);
 			if (torrentsURL.isFailure()) {
 				stage.close();
 				System.exit(0);
 			}
+
+			Failable<String> torrentCMD = getStringFromUser(rootG, "torrentcmd", "Torrent command (eg: deluge add)",
+					false);
+			if (torrentCMD.isFailure()) {
+				stage.close();
+				System.exit(0);
+			}
+			String torrentCommand = torrentCMD.get();
+
+			Failable<String> unrarCMD = getStringFromUser(rootG, "unrarcmd",
+					"Unrar command (eg: \"C:\\Program Files\\...\\unrar.exe\")", false);
+			if (unrarCMD.isFailure()) {
+				stage.close();
+				System.exit(0);
+			}
+			String unrarCommand = unrarCMD.get();
+
 			TorrentMatchings m = TorrentMatchings.load(rootG);
 			logger.debug("Opened TorrentMatchings at " + m.getFile());
 
@@ -116,22 +152,23 @@ public class Main extends Application {
 			logger.debug("Opened AlreadyTransferred at " + t.getFilename());
 
 			AlreadyDownloaded alreadyDownloaded = AlreadyDownloaded.empty();
-			alreadyDownloaded.load(rootG, logger);
+			alreadyDownloaded.load(rootG, tvDest, logger);
 
 			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(), alreadyDownloaded, logger);
+			AppConfig appConfig = new DefaultAppConfig(m.getPreferences(), alreadyDownloaded, rootG, torrentCommand);
 
-			final ScheduledExecutorService ex = DownloadDaemon.start(rootG, rss, m.getPreferences(), alreadyDownloaded,
-					logger);
+			final ScheduledExecutorService ex = DownloadDaemon.start(rss, logger, appConfig);
 			FileToXBMCDaemon fileToXBMCDaemon = new FileToXBMCDaemon();
-			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(logger, m, t);
+			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(logger, m, t, tvDest, finishedTorrents,
+					unrarCommand);
 			final ScheduledExecutorService logSaveClear = LoggerSaveClear.start(rootG, logger);
 			createTrayIcon(stage, ex, fileMove, logger, logSaveClear);
-			Parent pane = new LazyTorrentsControlPanel(rootG, m, alreadyDownloaded, logger, rss,
-					fileToXBMCDaemon.countDownProperty()).getNode();
+			Parent pane = new LazyTorrentsControlPanel(m, logger, rss, fileToXBMCDaemon.countDownProperty(), appConfig)
+					.getNode();
 			Scene scene = new Scene(pane, 1024, 768);
 			stage.setOpacity(1.0);
 			stage.setScene(scene);
-			// hide(stage);
+			hide(stage);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -139,22 +176,23 @@ public class Main extends Application {
 
 	}
 
-	private Failable<String> getTorrentFeedURL(Path root) {
+	private Failable<String> getStringFromUser(Path root, String prefix, String message, boolean deleteFileIfFail) {
 
-		Failable<String> existing = getExistingTorrentURL(root);
+		Failable<String> existing = getExistingStringProp(root, prefix, deleteFileIfFail);
 		if (existing.isSuccess()) {
 			return existing;
 		}
 
 		TextInputQuestionDialog d = Dialogs.newTextInputQuestionDialog();
+		d.setMessage(message);
 		Failable<String> answer = d.showDialog();
 		if (answer.isSuccess()) {
 			if (answer.get().isEmpty()) {
 				return EMPTY_URL;
 			}
 			File userconf = new File(root + File.separator + USER_CONFIG_FILE);
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(userconf))) {
-				bw.write(answer.get());
+			try (BufferedWriter bw = new BufferedWriter(new FileWriter(userconf, true))) {
+				bw.write(prefix + "-" + answer.get() + "\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -163,65 +201,88 @@ public class Main extends Application {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Failable<String> getExistingTorrentURL(Path root) {
+	private Failable<String> getExistingStringProp(Path root, String prefix, boolean deleteFileIfFail) {
 		File userconf = new File(root + File.separator + USER_CONFIG_FILE);
 		if (userconf.exists()) {
 
+			String line = "";
 			try (BufferedReader br = new BufferedReader(new FileReader(userconf))) {
-				String s = br.readLine();
-				if (s.isEmpty()) {
-					return NO_USER_CONFIG_YET;
+				while ((line = br.readLine()) != null) {
+					if (line.isEmpty()) {
+						continue;
+					}
+					String[] split = line.split("-");
+					if (split[0].equals(prefix)) {
+						return Failable.ofSuccess(line.replace(split[0] + "-", ""));
+					}
 				}
-				return Failable.ofSuccess(s);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		if (deleteFileIfFail) {
+			userconf.delete();
+		}
 		return NO_USER_CONFIG_YET;
 	}
 
-	private Failable<Path> getRoot(Stage stage, Logger logger) {
+	private Failable<Path> getDest(Stage stage, Logger logger, String prefix, boolean deleteFileIfMissing) {
 
-		Failable<Path> existingRoot = getExistingRoot();
-		if (existingRoot.isSuccess()) {
-			return existingRoot;
+		Failable<Path> existingTVDest = getExistingDest(prefix, deleteFileIfMissing);
+		if (existingTVDest.isSuccess()) {
+			return existingTVDest;
 		}
 
-		logger.debug(existingRoot.getReason() + " -- Prompting user.");
+		logger.debug(existingTVDest.getReason() + " -- Prompting user.");
 
 		DirectoryChooser fc = new DirectoryChooser();
+		fc.setTitle("Select Dir: " + prefix);
 		File file = fc.showDialog(stage.getOwner());
 		if (file == null) {
 			return USER_CANCELLED;
 		}
 
-		recordDir(file);
+		recordDir(file, prefix);
 
 		return Failable.ofSuccess(file.toPath());
 	}
 
-	private void recordDir(File file) {
+	private void recordDir(File file, String prefix) {
 		File configFile = new File(CONFIG_FILE);
-		try (BufferedWriter br = new BufferedWriter(new FileWriter(configFile))) {
-			br.write(file.getAbsolutePath());
+		if (!configFile.getParentFile().exists()) {
+			configFile.getParentFile().mkdirs();
+		}
+		try (BufferedWriter br = new BufferedWriter(new FileWriter(configFile, true))) {
+			br.append(prefix + "-" + file.getAbsolutePath() + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private Failable<Path> getExistingRoot() {
+	private Failable<Path> getExistingDest(String prefix, boolean deleteFileIfNotFound) {
 		File rootQ = new File(CONFIG_FILE);
 		if (rootQ.exists()) {
 
 			try (BufferedReader br = new BufferedReader(new FileReader(rootQ))) {
-				File potential = new File(br.readLine());
-				if (potential.exists()) {
-					return Failable.ofSuccess(potential.toPath());
+
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					String split[] = line.split("-");
+					if (prefix.equals(split[0])) {
+						File potential = new File(line.replace(prefix + "-", ""));
+						if (!potential.exists()) {
+							potential.mkdirs();
+						}
+						return Failable.ofSuccess(potential.toPath());
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		if (deleteFileIfNotFound) {
+			rootQ.delete();
 		}
 		return NO_CONFIG_YET;
 	}
@@ -354,11 +415,12 @@ public class Main extends Application {
 	}
 
 	public void showProgramIsMinimizedMsg() {
-		if (firstTime) {
-			trayIcon.displayMessage("Running in background.", "Will download new torrents automatically.",
-					TrayIcon.MessageType.INFO);
-			firstTime = false;
-		}
+		// if (firstTime) {
+		// trayIcon.displayMessage("Running in background.",
+		// "Will download new torrents automatically.",
+		// TrayIcon.MessageType.INFO);
+		// firstTime = false;
+		// }
 	}
 
 	private void hide(final Stage stage) {

@@ -23,8 +23,17 @@ public class LoggerSaveClear {
 			@Override
 			public void run() {
 				Collection<String> messagesSoFar = logger.getMessageBuffer();
+				if (!rootDir.toFile().exists()) {
+					rootDir.toFile().mkdirs();
+				}
 				File fileToWrite = new File(rootDir.toFile(), LOGDIR + File.separator
 						+ DateTime.now().toString("dd-MM-YYYY--hhmm") + ".log");
+				try {
+					fileToWrite.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					return;
+				}
 				try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileToWrite))) {
 					for (String i : messagesSoFar) {
 						bw.write(i + "\r\n");

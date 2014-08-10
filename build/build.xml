@@ -149,9 +149,6 @@
 				<fileset dir="build/libs">
 					<include name="*"/>
 				</fileset>
-				<filelist>
-					<file name="C:\Program Files\Java\jdk1.7.0_55\jre\lib\jfxrt.jar"/>
-				</filelist>
 			</classpath>
 		</javac>
 		

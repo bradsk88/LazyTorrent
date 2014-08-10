@@ -131,7 +131,7 @@ public class Main extends Application {
 			Scene scene = new Scene(pane, 1024, 768);
 			stage.setOpacity(1.0);
 			stage.setScene(scene);
-			hide(stage);
+			// hide(stage);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

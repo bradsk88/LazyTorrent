@@ -26,7 +26,6 @@ import ca.bradj.lazytorrent.app.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.sun.javafx.beans.annotations.NonNull;
 
 public class TorrentsRSSFeed implements RSSFeed {
 
@@ -215,7 +214,7 @@ public class TorrentsRSSFeed implements RSSFeed {
 		// nextEvent);
 	}
 
-	private boolean is(@NonNull String constant, XMLEvent event) {
+	private boolean is(String constant, XMLEvent event) {
 		Preconditions.checkNotNull(constant);
 		if (event.isStartElement()) {
 			StartElement asStartElement = event.asStartElement();

@@ -20,13 +20,8 @@
 		<mkdir dir="externalLibs" />
 		
 		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Brad\.m2\repository\org\objenesis\objenesis\1.0">
-				<filename name="objenesis-1.0.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Brad\.m2\repository\commons-io\commons-io\2.4">
-				<filename name="commons-io-2.4.jar"/>	
+			<fileset dir="C:\Users\Brad\.m2\repository\ca\bradj\brava\0.0.1-SNAPSHOT">
+				<filename name="brava-0.0.1-SNAPSHOT.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -35,13 +30,8 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Brad\.m2\repository\ca\bradj\brava\0.0.1-SNAPSHOT">
-				<filename name="brava-0.0.1-SNAPSHOT.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\joda-time-2.3">
-				<filename name="joda-time-2.3.jar"/>	
+			<fileset dir="C:\Users\Brad\.m2\repository\commons-io\commons-io\2.4">
+				<filename name="commons-io-2.4.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -55,13 +45,28 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="C:\Guava">
-				<filename name="guava-15.0.jar"/>	
+			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-labs\8.0-r1">
+				<filename name="jfxtras-labs-8.0-r1.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-labs\8.0-r1">
-				<filename name="jfxtras-labs-8.0-r1.jar"/>	
+			<fileset dir="C:\eclipse\plugins">
+				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-fxml\8.0-r1">
+				<filename name="jfxtras-fxml-8.0-r1.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\org\objenesis\objenesis\1.0">
+				<filename name="objenesis-1.0.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\junit\junit\4.11">
+				<filename name="junit-4.11.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -75,18 +80,13 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Brad\.m2\repository\joda-time\joda-time\2.4">
+				<filename name="joda-time-2.4.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
 			<fileset dir="C:\Users\Brad\.m2\repository\com\google\guava\guava\17.0">
 				<filename name="guava-17.0.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\eclipse\plugins">
-				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Brad\.m2\repository\org\jfxtras\jfxtras-fxml\8.0-r1">
-				<filename name="jfxtras-fxml-8.0-r1.jar"/>	
 			</fileset>
 		</copy>
 		
@@ -113,20 +113,20 @@
 		<!-- Copy project-libs references -->
 		<copy todir="build/libs">
 			<fileset dir="externalLibs">
-				<include name="guava-15.0.jar"/>
 				<include name="mockito-core-1.9.5.jar"/>
 				<include name="brava-0.0.1-SNAPSHOT.jar"/>
 				<include name="jfxtras-fxml-8.0-r1.jar"/>
+				<include name="joda-time-2.4.jar"/>
 				<include name="objenesis-1.0.jar"/>
 				<include name="jfxtras-controls-8.0-r1.jar"/>
-				<include name="joda-time-2.3.jar"/>
 				<include name="commons-io-2.4.jar"/>
 				<include name="junit.jar"/>
 				<include name="jfxtras-labs-8.0-r1.jar"/>
+				<include name="guava-17.0.jar"/>
 				<include name="jfxtras-common-8.0-r1.jar"/>
 				<include name="hamcrest-core-1.1.jar"/>
-				<include name="guava-17.0.jar"/>
 				<include name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+				<include name="junit-4.11.jar"/>
 			</fileset>
 		</copy>
 	
@@ -186,6 +186,7 @@
 		<fx:application id="fxApplication"
 			name="LazyTorrent"
 			mainClass="ca.bradj.lazytorrent.app.Main"
+			toolkit="fx"
 		/>
 	
 		<mkdir dir="build/classes/META-INF" />
@@ -199,14 +200,30 @@
 			<fx:resources refid="appRes"/>
 			
 			<manifest>
-				<attribute name="Implementation-Vendor" value="B.ca"/>
+				<attribute name="Implementation-Vendor" value="ca.bradj"/>
 				<attribute name="Implementation-Title" value="LazyTorrent"/>
-				<attribute name="Implementation-Version" value=""/>
+				<attribute name="Implementation-Version" value="0.5"/>
 				<attribute name="JavaFX-Feature-Proxy" value="None"/>
 			</manifest>
 		</fx:jar>
 		
 	
+		<mkdir dir="deploy" />
+		<!-- Need to use ${basedir} because somehow the ant task is calculating the directory differently -->
+		<fx:deploy
+			verbose="true" 
+			embedJNLP="false"
+			extension="false"
+			includeDT="false"
+			offlineAllowed="true"
+			outdir="${basedir}/deploy"
+			outfile="SuperLazy" nativeBundles="none"
+			updatemode="background" >
+	
+			<fx:info title="SuperLazy" vendor="ca.bradj"/>
+			<fx:application refId="fxApplication"/>
+			<fx:resources refid="appRes"/>
+		</fx:deploy>
 		
 		
 	</target>

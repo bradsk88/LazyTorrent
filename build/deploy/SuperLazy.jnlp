@@ -11,19 +11,17 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="SuperLazy.jar" size="113269" download="eager" />
-    <jar href="libs/brava-0.0.1-SNAPSHOT.jar" size="11423" download="eager" />
+    <jar href="SuperLazy.jar" size="113297" download="eager" />
+    <jar href="libs/brava-0.0.1-SNAPSHOT.jar" size="11477" download="eager" />
     <jar href="libs/commons-io-2.4.jar" size="185140" download="eager" />
     <jar href="libs/guava-17.0.jar" size="2243036" download="eager" />
     <jar href="libs/hamcrest-core-1.1.jar" size="76643" download="eager" />
-    <jar href="libs/javafx-mx.jar" size="36040" download="eager" />
-    <jar href="libs/jfxswt.jar" size="41296" download="eager" />
     <jar href="libs/jfxtras-common-8.0-r1.jar" size="21869" download="eager" />
     <jar href="libs/jfxtras-controls-8.0-r1.jar" size="203573" download="eager" />
     <jar href="libs/jfxtras-fxml-8.0-r1.jar" size="2095" download="eager" />
     <jar href="libs/jfxtras-labs-8.0-r1.jar" size="443317" download="eager" />
-    <jar href="libs/joda-time-2.1.jar" size="570478" download="eager" />
-    <jar href="libs/junit-dep-4.8.2.jar" size="218272" download="eager" />
+    <jar href="libs/joda-time-2.4.jar" size="586201" download="eager" />
+    <jar href="libs/junit-4.11.jar" size="245039" download="eager" />
     <jar href="libs/junit.jar" size="245039" download="eager" />
     <jar href="libs/mockito-core-1.9.5.jar" size="1500011" download="eager" />
     <jar href="libs/objenesis-1.0.jar" size="28569" download="eager" />

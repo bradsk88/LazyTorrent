@@ -30,11 +30,6 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/home/brad/Downloads/jdk1.8.0_05/jre/lib">
-				<filename name="jfxswt.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
 			<fileset dir="/home/brad/Downloads/eclipse/plugins">
 				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>	
 			</fileset>
@@ -50,13 +45,13 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/home/brad/.m2/repository/org/hamcrest/hamcrest-core/1.1">
-				<filename name="hamcrest-core-1.1.jar"/>	
+			<fileset dir="/home/brad/.m2/repository/junit/junit/4.11">
+				<filename name="junit-4.11.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/home/brad/Downloads/jdk1.8.0_05/lib">
-				<filename name="javafx-mx.jar"/>	
+			<fileset dir="/home/brad/.m2/repository/org/hamcrest/hamcrest-core/1.1">
+				<filename name="hamcrest-core-1.1.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -65,18 +60,8 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/home/brad/.m2/repository/junit/junit-dep/4.8.2">
-				<filename name="junit-dep-4.8.2.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
 			<fileset dir="/home/brad/.m2/repository/org/jfxtras/jfxtras-fxml/8.0-r1">
 				<filename name="jfxtras-fxml-8.0-r1.jar"/>	
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="/home/brad/.m2/repository/joda-time/joda-time/2.1">
-				<filename name="joda-time-2.1.jar"/>	
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -95,6 +80,11 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
+			<fileset dir="/home/brad/.m2/repository/joda-time/joda-time/2.4">
+				<filename name="joda-time-2.4.jar"/>	
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
 			<fileset dir="/home/brad/.m2/repository/org/jfxtras/jfxtras-common/8.0-r1">
 				<filename name="jfxtras-common-8.0-r1.jar"/>	
 			</fileset>
@@ -103,12 +93,12 @@
 		<mkdir dir="project" />
 		<copy todir="project">
 			<fileset dir="/home/brad/git/LazyTorrent">
-				<include name="test/**" />
+				<include name="src/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
 			<fileset dir="/home/brad/git/LazyTorrent">
-				<include name="src/**" />
+				<include name="test/**" />
 			</fileset>
 		</copy>
 		
@@ -123,22 +113,20 @@
 		<!-- Copy project-libs references -->
 		<copy todir="build/libs">
 			<fileset dir="externalLibs">
-				<include name="joda-time-2.1.jar"/>
+				<include name="mockito-core-1.9.5.jar"/>
+				<include name="brava-0.0.1-SNAPSHOT.jar"/>
 				<include name="jfxtras-fxml-8.0-r1.jar"/>
 				<include name="objenesis-1.0.jar"/>
-				<include name="commons-io-2.4.jar"/>
-				<include name="guava-17.0.jar"/>
-				<include name="hamcrest-core-1.1.jar"/>
-				<include name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
-				<include name="mockito-core-1.9.5.jar"/>
-				<include name="javafx-mx.jar"/>
-				<include name="brava-0.0.1-SNAPSHOT.jar"/>
-				<include name="jfxswt.jar"/>
+				<include name="joda-time-2.4.jar"/>
 				<include name="jfxtras-controls-8.0-r1.jar"/>
+				<include name="commons-io-2.4.jar"/>
 				<include name="junit.jar"/>
-				<include name="junit-dep-4.8.2.jar"/>
 				<include name="jfxtras-labs-8.0-r1.jar"/>
+				<include name="hamcrest-core-1.1.jar"/>
+				<include name="guava-17.0.jar"/>
 				<include name="jfxtras-common-8.0-r1.jar"/>
+				<include name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+				<include name="junit-4.11.jar"/>
 			</fileset>
 		</copy>
 	
@@ -156,7 +144,7 @@
 			</fileset>
 		</copy>
 	
-		<javac includeantruntime="false" source="1.8" target="1.8" srcdir="build/src" destdir="build/classes" encoding="UTF-8">
+		<javac includeantruntime="false" source="1.7" target="1.7" srcdir="build/src" destdir="build/classes" encoding="UTF-8">
 			<classpath>
 				<fileset dir="build/libs">
 					<include name="*"/>
@@ -214,7 +202,7 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="ca.bradj"/>
 				<attribute name="Implementation-Title" value="LazyTorrent"/>
-				<attribute name="Implementation-Version" value="0.5"/>
+				<attribute name="Implementation-Version" value="0.6"/>
 				<attribute name="JavaFX-Feature-Proxy" value="None"/>
 			</manifest>
 		</fx:jar>

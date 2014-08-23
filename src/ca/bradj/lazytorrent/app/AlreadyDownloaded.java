@@ -102,14 +102,14 @@ public class AlreadyDownloaded {
 		int thisYear = DateTime.now().getYear();
 		Collection<Pair<Integer, File>> yearsToCheck = Lists.newArrayList();
 		for (int i = thisYear; i > thisYear - 100; i--) {
-			File yearFolder = new File(destinationPath.toFile(),Integer.toString(i));
+			File yearFolder = new File(destinationPath.toFile(), Integer.toString(i));
 			if (yearFolder.exists()) {
 				yearsToCheck.add(new Pair<>(i, yearFolder));
 			}
 		}
 		double i = 0;
 		final double fi = i;
-		double total = yearsToCheck.size();
+		final double total = yearsToCheck.size();
 		for (Pair<Integer, File> year : yearsToCheck) {
 			FXThreading.invokeLater(new Runnable() {
 
@@ -117,7 +117,7 @@ public class AlreadyDownloaded {
 				public void run() {
 					loadProgress.set(fi / total);
 				}
-				
+
 			});
 			Set<String> yearShows = Sets.newHashSet();
 			for (File f : year.getValue().listFiles()) {

@@ -76,23 +76,37 @@ public class MoveFinishedTorrents implements Runnable {
 	}
 
 	private void processFile(File file, File i) {
+		logger.debug("Assessing " + file.getName() + " for move");
 		try {
 			String name = i.getName();
 			if (alreadyTransferred.matches(name)) {
+				logger.debug("An exact match has already been moved for "
+						+ name + ", skipping it.");
 				return;
 			}
 			TorrentMatch showName = prefs.getStrongestMatch(i.getName());
-			if (alreadyTransferred.matches(name)) {
+			if (alreadyTransferred.matches(showName.getName())) {
+				logger.debug(showName + " already exists.  Skipping move.");
 				return;
 			}
 			if (showName.isUnmovable()) {
+				logger.debug(name + " is unmovable.");
 				return;
 			}
 			if (showName.isMovie()) {
+				logger.debug("Identified " + name + " as a movie.  Skipping.");
 				return;
 			}
 			if (showName.isPreference()) {
-				moveFile(file, i, showName.getName(), name);
+				logger.debug("Moving " + showName.getName() + " now");
+
+				try {
+					moveFile(file, i, showName.getName(), name);
+				} catch (Exception e) {
+					logger.error("An exception occurred during the file transfer for "
+							+ showName.getName() + "\n" + e.getMessage());
+					e.printStackTrace();
+				}
 				return;
 			}
 			prefs.addUnmovable(i.getName());
@@ -110,6 +124,8 @@ public class MoveFinishedTorrents implements Runnable {
 
 		MoveInfo moveInfo = MoveInfo.create().destinationFolder(destPath)
 				.showName(showName).upperName(upperName).build();
+
+		logger.debug("Move process initiated for: " + moveInfo);
 
 		if (i.isDirectory()) {
 			if (directoryContainsIncompleteSetOfRARFiles(i)) {
@@ -170,10 +186,6 @@ public class MoveFinishedTorrents implements Runnable {
 	private Failable<File> unrar(File f, MoveInfo moveInfo) {
 
 		try {
-			// String command = "\"C:" + File.separator + "Program Files"
-			// + File.separator + "WinRAR" + File.separator
-			// + "unrar.exe\" x -o+ \"" + f.getAbsolutePath() + "\" \""
-			// + f.getParent() + "\"";
 			String command = unrarCommand + " " + f.getAbsolutePath();
 			if (command.contains("%RARFILE%")) {
 				command = unrarCommand
@@ -249,7 +261,8 @@ public class MoveFinishedTorrents implements Runnable {
 		int expectedNumber = 0;
 		boolean gapped = false;
 		File[] listFiles = parent.listFiles();
-		Collection<File> sortedListFiles = Ordering.<File>natural().sortedCopy(Lists.newArrayList(listFiles));
+		Collection<File> sortedListFiles = Ordering.<File> natural()
+				.sortedCopy(Lists.newArrayList(listFiles));
 		for (File i : sortedListFiles) {
 			if (i.getPath().endsWith("\\.rar")) {
 				continue;

@@ -26,11 +26,18 @@ public class MoveInfo {
 	}
 
 	public File getDestinationFile(File src) {
-		return new File(destPath + File.separator + showName + File.separator + src.getName());
+		return new File(destPath + File.separator + showName + File.separator
+				+ src.getName());
 	}
 
 	public String getPrettyName() {
 		return upperName;
+	}
+
+	@Override
+	public String toString() {
+		return "MoveInfo [destPath=" + destPath + ", showName=" + showName
+				+ ", unrarred=" + unrarred + ", upperName=" + upperName + "]";
 	}
 
 }

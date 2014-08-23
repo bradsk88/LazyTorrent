@@ -10,14 +10,19 @@ import com.google.common.collect.Lists;
 public class SimpleLogger implements Logger {
 
 	private final Collection<LogListener> listeners = Lists.newArrayList();
-	private final EvictingQueue<String> messagesBuffer = EvictingQueue.create(1000);
+	private final EvictingQueue<String> messagesBuffer = EvictingQueue
+			.create(1000);
 
 	@Override
 	public void log(String message) {
-		for (LogListener l : listeners) {
-			l.newMessageAdded(message);
+		try {
+			for (LogListener l : listeners) {
+				l.newMessageAdded(message);
+			}
+		} finally {
+			messagesBuffer.add("[LOG-" + DateTime.now().toString("ddMMYY-hhmm")
+					+ "]" + message);
 		}
-		messagesBuffer.add("[LOG-" + DateTime.now().toString("ddMMYY-hhmm") + "]" + message);
 	}
 
 	@Override
@@ -37,27 +42,39 @@ public class SimpleLogger implements Logger {
 
 	@Override
 	public void notification(String string) {
-		for (LogListener l : listeners) {
-			l.newNotificationAdded(string);
+		try {
+			for (LogListener l : listeners) {
+				l.newNotificationAdded(string);
+			}
+		} finally {
+			messagesBuffer.add("[NOTIF-"
+					+ DateTime.now().toString("ddMMYY-hhmm") + "]" + string);
 		}
-		messagesBuffer.add("[NOTIF-" + DateTime.now().toString("ddMMYY-hhmm") + "]" + string);
 	}
 
 	@Override
 	public void error(String string) {
-		for (LogListener l : listeners) {
-			l.newErrorAdded(string);
+		try {
+			for (LogListener l : listeners) {
+				l.newErrorAdded(string);
+			}
+		} finally {
+			messagesBuffer.add("[ERROR-"
+					+ DateTime.now().toString("ddMMYY-hhmm") + "]" + string);
 		}
-		messagesBuffer.add("[ERROR-" + DateTime.now().toString("ddMMYY-hhmm") + "]" + string);
 	}
 
 	@Override
 	public void debug(String string) {
-		for (LogListener l : listeners) {
-			l.debugAdded(string);
+		try {
+			for (LogListener l : listeners) {
+				l.debugAdded(string);
+			}
+		} finally {
+			System.out.println(string);
+			messagesBuffer.add("[DEBUG-"
+					+ DateTime.now().toString("ddMMYY-hhmm") + "]" + string);
 		}
-		System.out.println(string);
-		messagesBuffer.add("[DEBUG-" + DateTime.now().toString("ddMMYY-hhmm") + "]" + string);
 	}
 
 	@Override
@@ -68,8 +85,12 @@ public class SimpleLogger implements Logger {
 	@Override
 	public void clearMessageBuffer() {
 		messagesBuffer.clear();
-		for (LogListener l : listeners) {
-			l.bufferCleared();
+		try {
+			for (LogListener l : listeners) {
+				l.bufferCleared();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

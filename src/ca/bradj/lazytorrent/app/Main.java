@@ -44,23 +44,19 @@ import ca.bradj.lazytorrent.transfer.FileToXBMCDaemon;
 public class Main extends Application {
 
 	private static final String USER_CONFIG_FILE = "userconfig";
-	private static final String CONFIG_FILE = getAppDataDir() + File.separator
-			+ getDotIfNeeded() + "LazyTorrent" + File.separator + "config";
+	private static final String CONFIG_FILE = getAppDataDir() + File.separator + getDotIfNeeded() + "LazyTorrent"
+			+ File.separator + "config";
 	private static final String NOTIFICATION = "Notification";
 	private static final Image NORMAL_IMAGE;
 	private static final Image ERROR_IMAGE;
 	protected static final String RECORDED = "Recorded logs to %APPDATA/LazyTorrent/logs";
 	private static final javafx.scene.image.Image APP_ICON = tryLoadFXImage("normal.png");
-	private static final Failable<Path> USER_CANCELLED = Failable
-			.fail("Cancelled by user");
+	private static final Failable<Path> USER_CANCELLED = Failable.fail("Cancelled by user");
 	@SuppressWarnings("rawtypes")
-	private static final Failable NO_CONFIG_YET = Failable
-			.fail("System configuration does not yet exist.");
+	private static final Failable NO_CONFIG_YET = Failable.fail("System configuration does not yet exist.");
 	@SuppressWarnings("rawtypes")
-	private static final Failable NO_USER_CONFIG_YET = Failable
-			.fail("User configuration does not yet exist.");
-	private static final Failable<String> EMPTY_URL = Failable
-			.fail("User provided empty torrent URL");
+	private static final Failable NO_USER_CONFIG_YET = Failable.fail("User configuration does not yet exist.");
+	private static final Failable<String> EMPTY_URL = Failable.fail("User provided empty torrent URL");
 	static {
 		ERROR_IMAGE = tryLoadImage("error.png");
 		NORMAL_IMAGE = tryLoadImage("normal.png");
@@ -86,8 +82,7 @@ public class Main extends Application {
 		if (OS.contains("WIN"))
 			return System.getenv("APPDATA");
 		else if (OS.contains("MAC"))
-			return System.getProperty("user.home") + "/Library/Application "
-					+ "Support";
+			return System.getProperty("user.home") + "/Library/Application " + "Support";
 		else if (OS.contains("NUX"))
 			return System.getProperty("user.home");
 		return System.getProperty("user.dir");
@@ -95,10 +90,10 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		
+
 		System.out.println("Waiting for Display");
-		Thread.sleep(5000);
-		
+		Thread.sleep(10000);
+
 		stage.getIcons().add(APP_ICON);
 		firstTime = true;
 		Platform.setImplicitExit(false);
@@ -133,21 +128,23 @@ public class Main extends Application {
 				stage.close();
 				System.exit(0);
 			}
-			
-			Failable<String> torrentCMD = getStringFromUser(rootG, "torrentcmd", "Torrent command (eg: deluge add)", false);
+
+			Failable<String> torrentCMD = getStringFromUser(rootG, "torrentcmd", "Torrent command (eg: deluge add)",
+					false);
 			if (torrentCMD.isFailure()) {
 				stage.close();
 				System.exit(0);
 			}
 			String torrentCommand = torrentCMD.get();
-			
-			Failable<String> unrarCMD = getStringFromUser(rootG, "unrarcmd", "Unrar command (eg: \"C:\\Program Files\\...\\unrar.exe\")", false);
+
+			Failable<String> unrarCMD = getStringFromUser(rootG, "unrarcmd",
+					"Unrar command (eg: \"C:\\Program Files\\...\\unrar.exe\")", false);
 			if (unrarCMD.isFailure()) {
 				stage.close();
 				System.exit(0);
 			}
 			String unrarCommand = unrarCMD.get();
-			
+
 			TorrentMatchings m = TorrentMatchings.load(rootG);
 			logger.debug("Opened TorrentMatchings at " + m.getFile());
 
@@ -157,25 +154,21 @@ public class Main extends Application {
 			AlreadyDownloaded alreadyDownloaded = AlreadyDownloaded.empty();
 			alreadyDownloaded.load(rootG, tvDest, logger);
 
-			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(),
-					alreadyDownloaded, logger);
-			AppConfig appConfig = new DefaultAppConfig(m.getPreferences(),
-					alreadyDownloaded, rootG, torrentCommand);
+			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(), alreadyDownloaded, logger);
+			AppConfig appConfig = new DefaultAppConfig(m.getPreferences(), alreadyDownloaded, rootG, torrentCommand);
 
-			final ScheduledExecutorService ex = DownloadDaemon.start(rss, logger,
-					appConfig);
+			final ScheduledExecutorService ex = DownloadDaemon.start(rss, logger, appConfig);
 			FileToXBMCDaemon fileToXBMCDaemon = new FileToXBMCDaemon();
-			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(
-					logger, m, t, tvDest, finishedTorrents, unrarCommand);
-			final ScheduledExecutorService logSaveClear = LoggerSaveClear
-					.start(rootG, logger);
+			final ScheduledExecutorService fileMove = fileToXBMCDaemon.start(logger, m, t, tvDest, finishedTorrents,
+					unrarCommand);
+			final ScheduledExecutorService logSaveClear = LoggerSaveClear.start(rootG, logger);
 			createTrayIcon(stage, ex, fileMove, logger, logSaveClear);
-			Parent pane = new LazyTorrentsControlPanel(m, logger, rss,
-					fileToXBMCDaemon.countDownProperty(), appConfig).getNode();
+			Parent pane = new LazyTorrentsControlPanel(m, logger, rss, fileToXBMCDaemon.countDownProperty(), appConfig)
+					.getNode();
 			Scene scene = new Scene(pane, 1024, 768);
 			stage.setOpacity(1.0);
 			stage.setScene(scene);
-			hide(stage);
+			// hide(stage);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -191,15 +184,14 @@ public class Main extends Application {
 		}
 
 		TextInputQuestionDialog d = Dialogs.newTextInputQuestionDialog();
-		d.setMessage(message);
+		 d.setMessage(message);
 		Failable<String> answer = d.showDialog();
 		if (answer.isSuccess()) {
 			if (answer.get().isEmpty()) {
 				return EMPTY_URL;
 			}
 			File userconf = new File(root + File.separator + USER_CONFIG_FILE);
-			try (BufferedWriter bw = new BufferedWriter(
-					new FileWriter(userconf,true))) {
+			try (BufferedWriter bw = new BufferedWriter(new FileWriter(userconf, true))) {
 				bw.write(prefix + "-" + answer.get() + "\n");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -214,15 +206,14 @@ public class Main extends Application {
 		if (userconf.exists()) {
 
 			String line = "";
-			try (BufferedReader br = new BufferedReader(
-					new FileReader(userconf))) {
+			try (BufferedReader br = new BufferedReader(new FileReader(userconf))) {
 				while ((line = br.readLine()) != null) {
 					if (line.isEmpty()) {
 						continue;
-					} 
+					}
 					String[] split = line.split("-");
 					if (split[0].equals(prefix)) {
-						return Failable.ofSuccess(line.replace(split[0]+"-", ""));
+						return Failable.ofSuccess(line.replace(split[0] + "-", ""));
 					}
 				}
 			} catch (IOException e) {
@@ -235,11 +226,9 @@ public class Main extends Application {
 		return NO_USER_CONFIG_YET;
 	}
 
-	private Failable<Path> getDest(Stage stage, Logger logger, String prefix,
-			boolean deleteFileIfMissing) {
+	private Failable<Path> getDest(Stage stage, Logger logger, String prefix, boolean deleteFileIfMissing) {
 
-		Failable<Path> existingTVDest = getExistingDest(prefix,
-				deleteFileIfMissing);
+		Failable<Path> existingTVDest = getExistingDest(prefix, deleteFileIfMissing);
 		if (existingTVDest.isSuccess()) {
 			return existingTVDest;
 		}
@@ -263,8 +252,7 @@ public class Main extends Application {
 		if (!configFile.getParentFile().exists()) {
 			configFile.getParentFile().mkdirs();
 		}
-		try (BufferedWriter br = new BufferedWriter(new FileWriter(configFile,
-				true))) {
+		try (BufferedWriter br = new BufferedWriter(new FileWriter(configFile, true))) {
 			br.append(prefix + "-" + file.getAbsolutePath() + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -272,8 +260,7 @@ public class Main extends Application {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Failable<Path> getExistingDest(String prefix,
-			boolean deleteFileIfNotFound) {
+	private Failable<Path> getExistingDest(String prefix, boolean deleteFileIfNotFound) {
 		File rootQ = new File(CONFIG_FILE);
 		if (rootQ.exists()) {
 
@@ -283,7 +270,7 @@ public class Main extends Application {
 				while ((line = br.readLine()) != null) {
 					String split[] = line.split("-");
 					if (prefix.equals(split[0])) {
-						File potential = new File(line.replace(prefix+"-", ""));
+						File potential = new File(line.replace(prefix + "-", ""));
 						if (!potential.exists()) {
 							potential.mkdirs();
 						}
@@ -300,10 +287,8 @@ public class Main extends Application {
 		return NO_CONFIG_YET;
 	}
 
-	public void createTrayIcon(final Stage stage,
-			final ScheduledExecutorService exec,
-			final ScheduledExecutorService fileMove, Logger logger,
-			final ScheduledExecutorService logSaveClear) {
+	public void createTrayIcon(final Stage stage, final ScheduledExecutorService exec,
+			final ScheduledExecutorService fileMove, Logger logger, final ScheduledExecutorService logSaveClear) {
 		if (SystemTray.isSupported()) {
 			// get the SystemTray instance
 			SystemTray tray = SystemTray.getSystemTray();
@@ -376,8 +361,7 @@ public class Main extends Application {
 				FXThreading.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						trayIcon.displayMessage(NOTIFICATION, string,
-								MessageType.INFO);
+						trayIcon.displayMessage(NOTIFICATION, string, MessageType.INFO);
 					}
 				});
 			}
@@ -402,8 +386,7 @@ public class Main extends Application {
 
 			@Override
 			public void bufferCleared() {
-				trayIcon.displayMessage(NOTIFICATION, RECORDED,
-						MessageType.INFO);
+				trayIcon.displayMessage(NOTIFICATION, RECORDED, MessageType.INFO);
 			}
 
 			@Override
@@ -424,8 +407,7 @@ public class Main extends Application {
 
 	private static javafx.scene.image.Image tryLoadFXImage(String string) {
 		try {
-			return new javafx.scene.image.Image(
-					Main.class.getResourceAsStream(string));
+			return new javafx.scene.image.Image(Main.class.getResourceAsStream(string));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -433,12 +415,12 @@ public class Main extends Application {
 	}
 
 	public void showProgramIsMinimizedMsg() {
-//		if (firstTime) {
-//			trayIcon.displayMessage("Running in background.",
-//					"Will download new torrents automatically.",
-//					TrayIcon.MessageType.INFO);
-//			firstTime = false;
-//		}
+		// if (firstTime) {
+		// trayIcon.displayMessage("Running in background.",
+		// "Will download new torrents automatically.",
+		// TrayIcon.MessageType.INFO);
+		// firstTime = false;
+		// }
 	}
 
 	private void hide(final Stage stage) {

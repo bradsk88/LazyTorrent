@@ -44,8 +44,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jfxtras</groupId>
+<<<<<<< HEAD
 			<artifactId>jfxtras-labs</artifactId>
 			<version>2.2-r5</version>
+=======
+			<artifactId>jfxtras-common</artifactId>
+			<version>8.0-r1</version>
+>>>>>>> 9349bea131ed026875b5e07c2b82bb3d0f4fbecd
 		</dependency>
 		<dependency>
 			<groupId>ca.bradj</groupId>

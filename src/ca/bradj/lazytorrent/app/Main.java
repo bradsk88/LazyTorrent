@@ -184,7 +184,7 @@ public class Main extends Application {
 		}
 
 		TextInputQuestionDialog d = Dialogs.newTextInputQuestionDialog();
-		 d.setMessage(message);
+		d.setMessage(message);
 		Failable<String> answer = d.showDialog();
 		if (answer.isSuccess()) {
 			if (answer.get().isEmpty()) {

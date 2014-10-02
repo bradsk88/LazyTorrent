@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javafx.application.Application;
@@ -97,10 +98,10 @@ public class Main extends Application {
 		stage.getIcons().add(APP_ICON);
 		firstTime = true;
 		Platform.setImplicitExit(false);
+		Logger logger = new SimpleLogger();
 		try {
 			stage.setOpacity(0);
 			stage.show();
-			Logger logger = new SimpleLogger();
 
 			Failable<Path> root = getDest(stage, logger, "root", true);
 			if (root.isFailure()) {
@@ -170,6 +171,7 @@ public class Main extends Application {
 			stage.setScene(scene);
 			// hide(stage);
 		} catch (Exception e) {
+			logger.error(Arrays.toString(e.getStackTrace()));
 			e.printStackTrace();
 			System.exit(-1);
 		}

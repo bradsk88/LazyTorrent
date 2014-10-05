@@ -41,7 +41,6 @@ import ca.bradj.lazytorrent.rss.TorrentsRSSFeed;
 import ca.bradj.lazytorrent.transfer.AlreadyTransferred;
 import ca.bradj.lazytorrent.transfer.FileToXBMCDaemon;
 
-@SuppressWarnings("restriction")
 public class Main extends Application {
 
 	private static final String USER_CONFIG_FILE = "userconfig";
@@ -63,7 +62,6 @@ public class Main extends Application {
 		NORMAL_IMAGE = tryLoadImage("normal.png");
 	}
 
-	private boolean firstTime;
 	private TrayIcon trayIcon;
 
 	public static void main(String[] args) {
@@ -96,7 +94,6 @@ public class Main extends Application {
 		Thread.sleep(10000);
 
 		stage.getIcons().add(APP_ICON);
-		firstTime = true;
 		Platform.setImplicitExit(false);
 		Logger logger = new SimpleLogger();
 		try {

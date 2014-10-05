@@ -1,6 +1,5 @@
 package ca.bradj.lazytorrent.app;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import ca.bradj.lazytorrent.prefs.Preferences;

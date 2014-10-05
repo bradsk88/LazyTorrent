@@ -28,9 +28,9 @@ public class PreferenceScrape {
 	private static final Failable<WithConfidence<Pair<RSSTorrent, String>>> SIZE_NOT_REPORTED = Failable
 			.fail("Cannot look up size");
 	private static final String X264 = "X264";
-	private static final int LOWER_FILE_1080P = 600;
-	private static final int UPPER_FILE_1080P = 1200;
-	private static final int LOWEST_FILE = 400;
+//	private static final int LOWER_FILE_1080P = 600;
+//	private static final int UPPER_FILE_1080P = 1200;
+//	private static final int LOWEST_FILE = 400;
 	private final String pref;
 	private final Logger logger;
 
@@ -117,7 +117,6 @@ public class PreferenceScrape {
 
 	}
 
-	@SuppressWarnings("unused")
 	private Failable<WithConfidence<Pair<RSSTorrent, String>>> findInFileSizeRange() {
 		return SIZE_NOT_REPORTED;
 	}
@@ -172,7 +171,6 @@ public class PreferenceScrape {
 		return Failable.ofSuccess(WithConfidence.medium(first));
 	}
 
-	@SuppressWarnings("unused")
 	private Failable<WithConfidence<Pair<RSSTorrent, String>>> tryFilesizeElseChooseArbitrarily(
 			Collection<Pair<RSSTorrent, String>> matches) {
 		Pair<RSSTorrent, String> first = Iterables.getFirst(matches, null);

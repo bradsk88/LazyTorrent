@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>SuperLazy</groupId>
 	<artifactId>SuperLazy</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
@@ -20,8 +20,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -67,19 +67,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 		</dependency>
-
 	</dependencies>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>Internal Repository</name>
-			<url>http://192.168.1.26:8080/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>releases</id>
-			<name>Internal Repository</name>
-			<url>http://192.168.1.26:8080/nexus/content/repositories/releases/</url>
-		</repository>
-	</distributionManagement>
 	<name>LazyTorrent</name>
 </project>

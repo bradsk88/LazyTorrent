@@ -7,16 +7,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
-import com.google.common.base.Preconditions;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.Pair;
 import ca.bradj.common.base.Failable;
-import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.connection.Torrent;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
-import ca.bradj.lazytorrent.scrape.ScrapeListView;
+
 import com.google.common.base.Preconditions;
 
 public class DownloadScrapedItems implements EventHandler<ActionEvent> {

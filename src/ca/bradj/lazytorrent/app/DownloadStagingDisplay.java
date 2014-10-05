@@ -1,20 +1,14 @@
 package ca.bradj.lazytorrent.app;
 
-import java.nio.file.Path;
-
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderPaneBuilder;
 import ca.bradj.Layouts;
-import ca.bradj.common.base.Preconditions2;
-import ca.bradj.lazytorrent.prefs.Preferences;
 import ca.bradj.lazytorrent.rss.RSSListView;
 import ca.bradj.lazytorrent.scrape.RSSFeedScraper;
 import ca.bradj.lazytorrent.scrape.ScrapeListView;
 import ca.bradj.lazytorrent.scrape.ShowScrapedItems;
-
-import com.google.common.base.Preconditions;
 
 public class DownloadStagingDisplay {
 

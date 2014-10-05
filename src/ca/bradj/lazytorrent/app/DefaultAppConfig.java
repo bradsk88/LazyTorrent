@@ -1,12 +1,11 @@
 package ca.bradj.lazytorrent.app;
 
-import java.io.File;
 import java.nio.file.Path;
-
-import com.google.common.base.Preconditions;
 
 import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.prefs.Preferences;
+
+import com.google.common.base.Preconditions;
 
 public class DefaultAppConfig implements AppConfig {
 

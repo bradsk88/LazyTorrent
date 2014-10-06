@@ -2,6 +2,7 @@ package ca.bradj.lazytorrent.scrape;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import javafx.util.Pair;
 import ca.bradj.common.base.Confidence;
@@ -10,8 +11,10 @@ import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.matching.Matching;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
+import ca.bradj.scrape.matching.FailedMatch;
+import ca.bradj.scrape.matching.FailedMatches;
+import ca.bradj.scrape.matching.MatchFailHandler;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -33,10 +36,21 @@ public class PreferenceScrape {
 //	private static final int LOWEST_FILE = 400;
 	private final String pref;
 	private final Logger logger;
+	private Optional<MatchFailHandler<RSSTorrent>> matchFailHandler = Optional.empty();
 
-	public PreferenceScrape(String p, Logger logger) {
+	public PreferenceScrape( String p, Logger logger ) {
 		this.pref = p;
 		this.logger = Preconditions.checkNotNull(logger);
+	}
+	
+	public PreferenceScrape setMatchFailHandler( Optional<MatchFailHandler<RSSTorrent>> matchFailHandler ) {
+		this.matchFailHandler = Preconditions.checkNotNull( matchFailHandler );
+		return this;
+	}
+	
+	public PreferenceScrape setMatchFailHandler( MatchFailHandler<RSSTorrent> matchFailHandler ) {
+		this.matchFailHandler = Optional.of( matchFailHandler );
+		return this;
 	}
 
 	public Collection<WithConfidence<Pair<RSSTorrent, String>>> chooseBestMatch(ImmutableList<RSSTorrent> lastItems) {
@@ -48,7 +62,7 @@ public class PreferenceScrape {
 
 		Collection<WithConfidence<Pair<RSSTorrent, String>>> out = Lists.newArrayListWithCapacity(1);
 		Confidence lastConfidence = Confidence.LOW;
-		Optional<WithConfidence<Pair<RSSTorrent, String>>> lastMatch = Optional.absent();
+		Optional<WithConfidence<Pair<RSSTorrent, String>>> lastMatch = Optional.empty();
 
 		Failable<WithConfidence<Pair<RSSTorrent, String>>> topRes = find1080pVersion(matches);
 		if (topRes.isSuccess()) {
@@ -95,7 +109,15 @@ public class PreferenceScrape {
 			return out;
 		}
 
-		out.add(lastMatch.get());
+		if (lastMatch.isPresent()) {
+			out.add(lastMatch.get());
+		} else {
+			if (matchFailHandler.isPresent()) {
+				FailedMatch<RSSTorrent> failedMatch = FailedMatches.<RSSTorrent>create().build();
+				matchFailHandler.get().addFailedMatch( failedMatch );
+			}
+		}
+		
 		return out;
 	}
 

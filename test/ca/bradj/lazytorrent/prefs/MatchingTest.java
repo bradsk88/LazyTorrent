@@ -127,5 +127,5 @@ public class MatchingTest {
 		Failable<Pair<String, Double>> strongestMatch = Matching.getStrongestMatch(p.getList(), testName);
 		assertTrue(strongestMatch.isSuccess() ? null : strongestMatch.getReason(), strongestMatch.isSuccess());
 	}
-
+	
 }

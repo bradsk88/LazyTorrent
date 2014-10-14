@@ -30,7 +30,9 @@ public class RSSFeedScraper {
 		Collection<WithConfidence<Pair<RSSTorrent, String>>> out = Lists
 				.newArrayListWithExpectedSize(lastItems.size() / 2); // rough-heuristic
 		for (String p : prefs.getList()) {
-			out.addAll(new PreferenceScrape(p, logger).chooseBestMatch(lastItems));
+			PreferenceScrape scraper = new PreferenceScrape(p, logger);
+			Collection<WithConfidence<Pair<RSSTorrent, String>>> bestMatch = scraper.chooseBestMatch(lastItems);
+			out.addAll(bestMatch);
 		}
 		return out;
 	}

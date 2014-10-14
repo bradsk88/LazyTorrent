@@ -195,6 +195,14 @@ public class PreferenceScrape {
 				}
 				allMatches.add(i);
 			}
+			lOther = lOther.replace("the", "").trim();
+			lPref = lPref.replace("the", "").trim();
+			if (lOther.startsWith(lPref) || lOther.endsWith(lPref)) { 
+				if (Matching.isWholeSeason(i.getKey().getName())) {
+					continue;
+				}
+				allMatches.add(i);
+			}
 		}
 		logger.debug("Found " + allMatches.size() + " matches for " + s);
 		return allMatches;

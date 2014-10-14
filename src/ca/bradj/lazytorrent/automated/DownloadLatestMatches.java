@@ -8,6 +8,7 @@ import ca.bradj.lazytorrent.app.AppConfig;
 import ca.bradj.lazytorrent.app.DownloadScrapedItems;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.app.ScrapedItemsProvider;
+import ca.bradj.lazytorrent.prefs.Preferences;
 import ca.bradj.lazytorrent.rss.RSSFeed;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.lazytorrent.scrape.RSSFeedScraper;
@@ -30,8 +31,9 @@ public class DownloadLatestMatches implements Runnable {
 	public void run() {
 		try {
 			Collection<RSSTorrent> rssL = rss.requestRefresh();
-			Collection<WithConfidence<Pair<RSSTorrent, String>>> scraped = new RSSFeedScraper(
-					appConfig.getPrefs(), logger).getDownloadCandidates(rssL);
+			Preferences prefs = appConfig.getPrefs();
+			RSSFeedScraper scraper = new RSSFeedScraper(prefs, logger);
+			Collection<WithConfidence<Pair<RSSTorrent, String>>> scraped = scraper.getDownloadCandidates(rssL);
 			logger.debug("Downloading " + scraped.size()
 					+ " torrents if not already downloaded");
 			new DownloadScrapedItems(appConfig, toSupplier(scraped), logger)

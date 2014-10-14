@@ -27,3 +27,5 @@
 /build/
 =======
 >>>>>>> 9349bea131ed026875b5e07c2b82bb3d0f4fbecd
+/.classpath
+/.settings/org.eclipse.jdt.core.prefs

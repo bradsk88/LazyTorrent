@@ -12,7 +12,9 @@ import ca.bradj.lazytorrent.prefs.Preferences;
 import ca.bradj.lazytorrent.rss.RSSFeed;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.lazytorrent.scrape.RSSFeedScraper;
+import ca.bradj.scrape.matching.MatchFailHandler;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 public class DownloadLatestMatches implements Runnable {
@@ -26,14 +28,14 @@ public class DownloadLatestMatches implements Runnable {
 		this.logger = logger;
 		this.appConfig = Preconditions.checkNotNull(appCfg);
 	}
-
+	
 	@Override
 	public void run() {
 		try {
 			Collection<RSSTorrent> rssL = rss.requestRefresh();
-			Preferences prefs = appConfig.getPrefs();
-			RSSFeedScraper scraper = new RSSFeedScraper(prefs, logger);
-			Collection<WithConfidence<Pair<RSSTorrent, String>>> scraped = scraper.getDownloadCandidates(rssL);
+			Collection<WithConfidence<Pair<RSSTorrent, String>>> scraped = new RSSFeedScraper( appConfig.getPrefs(), logger)
+				.setMatchFailHandler( appConfig.getMatchFailHandler() )
+				.getDownloadCandidates(rssL);
 			logger.debug("Downloading " + scraped.size()
 					+ " torrents if not already downloaded");
 			new DownloadScrapedItems(appConfig, toSupplier(scraped), logger)
@@ -53,4 +55,5 @@ public class DownloadLatestMatches implements Runnable {
 			}
 		};
 	}
+	
 }

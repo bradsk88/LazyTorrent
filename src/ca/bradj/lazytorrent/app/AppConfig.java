@@ -1,9 +1,11 @@
 package ca.bradj.lazytorrent.app;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import ca.bradj.lazytorrent.prefs.Preferences;
+import ca.bradj.lazytorrent.rss.RSSTorrent;
+import ca.bradj.scrape.matching.MatchFailHandler;
 
 public interface AppConfig {
 
@@ -15,5 +17,6 @@ public interface AppConfig {
 
 	String getTorrentCommand();
 
+	Optional<MatchFailHandler<RSSTorrent>> getMatchFailHandler();
 
 }

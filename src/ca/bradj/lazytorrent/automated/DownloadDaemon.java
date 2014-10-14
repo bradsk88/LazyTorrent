@@ -4,9 +4,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Optional;
+
 import ca.bradj.lazytorrent.app.AppConfig;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.rss.RSSFeed;
+import ca.bradj.lazytorrent.rss.RSSTorrent;
+import ca.bradj.scrape.matching.MatchFailHandler;
 
 public class DownloadDaemon {
 

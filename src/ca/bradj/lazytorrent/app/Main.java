@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javafx.application.Application;
@@ -37,11 +38,13 @@ import ca.bradj.lazytorrent.automated.DownloadDaemon;
 import ca.bradj.lazytorrent.matching.TorrentMatchings;
 import ca.bradj.lazytorrent.rss.FXThreading;
 import ca.bradj.lazytorrent.rss.RSSFeed;
+import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.lazytorrent.rss.TorrentsRSSFeed;
 import ca.bradj.lazytorrent.transfer.AlreadyTransferred;
 import ca.bradj.lazytorrent.transfer.FileToXBMCDaemon;
+import ca.bradj.scrape.matching.FailedMatch;
+import ca.bradj.scrape.matching.MatchFailHandler;
 
-@SuppressWarnings("restriction")
 public class Main extends Application {
 
 	private static final String USER_CONFIG_FILE = "userconfig";
@@ -63,7 +66,6 @@ public class Main extends Application {
 		NORMAL_IMAGE = tryLoadImage("normal.png");
 	}
 
-	private boolean firstTime;
 	private TrayIcon trayIcon;
 
 	public static void main(String[] args) {
@@ -96,7 +98,6 @@ public class Main extends Application {
 		Thread.sleep(10000);
 
 		stage.getIcons().add(APP_ICON);
-		firstTime = true;
 		Platform.setImplicitExit(false);
 		Logger logger = new SimpleLogger();
 		try {
@@ -156,7 +157,8 @@ public class Main extends Application {
 			alreadyDownloaded.load(rootG, tvDest, logger);
 
 			RSSFeed rss = new TorrentsRSSFeed(torrentsURL.get(), alreadyDownloaded, logger);
-			AppConfig appConfig = new DefaultAppConfig(m.getPreferences(), alreadyDownloaded, rootG, torrentCommand);
+			Optional<MatchFailHandler<RSSTorrent>> handler = Optional.of( makeMatchFailHandler( m ) );
+			AppConfig appConfig = new DefaultAppConfig(m.getPreferences(), alreadyDownloaded, rootG, torrentCommand, handler);
 
 			final ScheduledExecutorService ex = DownloadDaemon.start(rss, logger, appConfig);
 			FileToXBMCDaemon fileToXBMCDaemon = new FileToXBMCDaemon();
@@ -176,6 +178,17 @@ public class Main extends Application {
 			System.exit(-1);
 		}
 
+	}
+
+	private MatchFailHandler<RSSTorrent> makeMatchFailHandler(TorrentMatchings m) {
+		return new MatchFailHandler<RSSTorrent>() {
+
+			@Override
+			public void addFailedMatch(FailedMatch<RSSTorrent> failedMatch) {
+				// TODO Auto-generated method stub
+				System.out.println("TODO: Pass to : " + m.hashCode());
+			}
+		};
 	}
 
 	private Failable<String> getStringFromUser(Path root, String prefix, String message, boolean deleteFileIfFail) {

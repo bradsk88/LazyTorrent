@@ -1,6 +1,5 @@
 package ca.bradj.lazytorrent.app;
 
-import java.nio.file.Path;
 import java.util.Collection;
 
 import javafx.beans.value.ObservableValue;

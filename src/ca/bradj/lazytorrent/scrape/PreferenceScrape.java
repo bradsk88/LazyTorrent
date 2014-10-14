@@ -10,6 +10,8 @@ import ca.bradj.common.base.Failable;
 import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.matching.Matching;
+import ca.bradj.lazytorrent.matching.Negation;
+import ca.bradj.lazytorrent.matching.Negations;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.scrape.matching.FailedMatch;
 import ca.bradj.scrape.matching.FailedMatches;
@@ -209,6 +211,14 @@ public class PreferenceScrape {
 		for (Pair<RSSTorrent, String> i : matches) {
 			String lOther = i.getKey().getName().toLowerCase();
 			String lPref = s.toLowerCase();
+			Collection<Negation> negations = Negations.get(lPref);
+			
+			if (Negations.matches(negations, lOther)) {
+				continue;
+			}
+			
+			lPref = Negations.removeAllNegations(lPref);
+			
 			if (lOther.startsWith(lPref) || lOther.endsWith(lPref)) {
 				if (Matching.isWholeSeason(i.getKey().getName())) {
 					continue;

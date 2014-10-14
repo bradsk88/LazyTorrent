@@ -44,5 +44,17 @@ public class PreferenceScrapeTest {
 		Collection<WithConfidence<Pair<RSSTorrent, String>>> chooseBestMatch = ps.chooseBestMatch(lastItems);
 		assertEquals(1, chooseBestMatch.size());
 	}
+	
+	@Test
+	public void test2() {
+		String toMatch = "Duck Quacks Dont Echo -US";
+		String testName = "Duck Quacks Dont Echo UK S02E07 Best Of Season 2 HDTV XviD-AFG";
+		PreferenceScrape ps = new PreferenceScrape(toMatch, Mockito.mock(Logger.class));
+		RSSTorrent raydono = Mockito.mock(RSSTorrent.class);
+		Mockito.when(raydono.getName()).thenReturn(testName);
+		ImmutableList<RSSTorrent> lastItems = ImmutableList.of(raydono);
+		Collection<WithConfidence<Pair<RSSTorrent, String>>> chooseBestMatch = ps.chooseBestMatch(lastItems);
+		assertEquals(1, chooseBestMatch.size());
+	}
 
 }

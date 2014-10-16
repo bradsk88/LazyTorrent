@@ -14,19 +14,27 @@ public class MoveInfo {
 	private final String showName;
 	private Optional<Path> unrarred;
 	private final String upperName;
+	private final Optional<String> oldName;
 
-	public MoveInfo(Path path, String showName, String upperName) {
+	public MoveInfo(Path path, String showName, String upperName, Optional<String> oldName) {
 		this.destPath = Preconditions.checkNotNull(path);
 		this.showName = Preconditions2.checkNotEmpty(showName);
 		this.upperName = Preconditions2.checkNotEmpty(upperName);
+		this.oldName = Preconditions.checkNotNull(oldName);
 	}
 
 	public static Builder create() {
 		return new Builder();
 	}
 
-	public File getDestinationFile(File src) {
+	public File getDestinationFile(String extension) {
 		return new File(destPath + File.separator + showName + File.separator
+				+ upperName + "." + extension);
+	}
+	
+
+	public File getOldDestinationFile(File src) {
+		return new File(destPath + File.separator + showName + File.separator 
 				+ src.getName());
 	}
 

@@ -13,11 +13,13 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.joda.time.DateTime;
 
 import ca.bradj.common.base.Failable;
 import ca.bradj.common.base.Preconditions2;
 import ca.bradj.lazytorrent.app.Config;
+import ca.bradj.lazytorrent.app.EpisodeID;
 import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.matching.TorrentMatch;
 import ca.bradj.lazytorrent.matching.TorrentMatchings;
@@ -25,6 +27,7 @@ import ca.bradj.lazytorrent.matching.TorrentMatchings;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -121,8 +124,16 @@ public class MoveFinishedTorrents implements Runnable {
 	private void moveFile(File destPath, File i, String showName,
 			String upperName) {
 
+		String nameToUse = upperName;
+		Failable<EpisodeID> ep = EpisodeID.parse(upperName);
+		if (ep.isSuccess()) {
+			String s = Integer.toString(ep.get().getSeason());
+			String e = Integer.toString(ep.get().getEpisode());
+			nameToUse = showName + " S" + Strings.padStart(s, 2, '0') + "E" + Strings.padStart(e, 2, '0');
+		}
+		
 		MoveInfo moveInfo = MoveInfo.create().destinationFolder(destPath)
-				.showName(showName).upperName(upperName).build();
+				.showName(showName).oldName(upperName).upperName(nameToUse).build();
 
 		logger.debug("Move process initiated for: " + moveInfo);
 
@@ -138,7 +149,9 @@ public class MoveFinishedTorrents implements Runnable {
 					return;
 				}
 			}
-			return;
+			for (File f : i.listFiles()) {
+				moveFile(destPath, f, showName, upperName);
+			}
 		}
 		if (isMoveType(i)) {
 			File destination = new File(destPath.getPath() + File.separator
@@ -298,6 +311,9 @@ public class MoveFinishedTorrents implements Runnable {
 	}
 
 	private boolean isMoveType(File i) {
+		if (i.getName().startsWith("sample")) {
+			return false;
+		}
 		if (i.getName().endsWith(".mkv")) {
 			return true;
 		}
@@ -311,8 +327,10 @@ public class MoveFinishedTorrents implements Runnable {
 	}
 
 	private void doMoveFile(File src, MoveInfo moveInfo, boolean deleteAfterMove) {
-		File dest = moveInfo.getDestinationFile(src);
-		if (Files.exists(dest.toPath()) && src.length() == dest.length()) {
+		File dest = moveInfo.getDestinationFile(FilenameUtils.getExtension(src.getName()));
+		File dest2 = moveInfo.getOldDestinationFile(src);
+		if ((Files.exists(dest2.toPath()) && src.length() == dest2.length()) || 
+				(Files.exists(dest.toPath())) && src.length() == dest.length()) {
 			if (deleteAfterMove) {
 				delete(src);
 			}

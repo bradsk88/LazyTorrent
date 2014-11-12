@@ -10,6 +10,7 @@ import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.AppConfig;
 import ca.bradj.lazytorrent.app.DownloadScrapedItems;
 import ca.bradj.lazytorrent.app.ScrapedItemsProvider;
+import ca.bradj.lazytorrent.prefs.Preferences;
 import ca.bradj.lazytorrent.rss.RSSFeed;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.lazytorrent.scrape.RSSFeedScraper;

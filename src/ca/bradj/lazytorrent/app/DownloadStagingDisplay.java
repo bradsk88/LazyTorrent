@@ -4,6 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderPaneBuilder;
+
+import org.slf4j.Logger;
+
 import ca.bradj.Layouts;
 import ca.bradj.lazytorrent.rss.RSSListView;
 import ca.bradj.lazytorrent.scrape.RSSFeedScraper;

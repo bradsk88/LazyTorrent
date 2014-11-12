@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import ca.bradj.common.base.Failable;
+import ca.bradj.gsmatch.EpisodeID;
 
 public class EpisodeIDTest {
 

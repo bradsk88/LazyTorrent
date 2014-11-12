@@ -1,4 +1,6 @@
-package ca.bradj.lazytorrent.matching;
+package ca.bradj.lazytorrent.app;
+
+import ca.bradj.gsmatch.TorrentMatch;
 
 import com.google.common.base.Preconditions;
 

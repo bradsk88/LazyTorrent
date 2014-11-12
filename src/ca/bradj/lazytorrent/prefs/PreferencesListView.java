@@ -1,5 +1,6 @@
 package ca.bradj.lazytorrent.prefs;
 
+import ca.bradj.RecordsChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;

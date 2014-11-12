@@ -17,11 +17,13 @@ import javafx.util.Pair;
 
 import org.apache.commons.io.FilenameUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 
 import ca.bradj.common.base.Failable;
+import ca.bradj.fx.FXThreading;
+import ca.bradj.gsmatch.EpisodeID;
+import ca.bradj.gsmatch.Matching;
 import ca.bradj.lazytorrent.connection.Torrent;
-import ca.bradj.lazytorrent.matching.Matching;
-import ca.bradj.lazytorrent.rss.FXThreading;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 
 import com.google.common.base.Preconditions;

@@ -8,9 +8,9 @@ import javafx.util.Pair;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
 
 import ca.bradj.common.base.WithConfidence;
-import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 
 import com.google.common.collect.ImmutableList;

@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Optional;
 
 import javafx.util.Pair;
+
+import org.slf4j.Logger;
+
 import ca.bradj.common.base.Confidence;
 import ca.bradj.common.base.Failable;
 import ca.bradj.common.base.WithConfidence;
-import ca.bradj.lazytorrent.app.Logger;
-import ca.bradj.lazytorrent.matching.Matching;
+import ca.bradj.gsmatch.Matching;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.scrape.matching.FailedMatch;
 import ca.bradj.scrape.matching.FailedMatches;
@@ -42,12 +44,12 @@ public class PreferenceScrape {
 		this.pref = p;
 		this.logger = Preconditions.checkNotNull(logger);
 	}
-	
+
 	public PreferenceScrape setMatchFailHandler( Optional<MatchFailHandler<RSSTorrent>> matchFailHandler ) {
 		this.matchFailHandler = Preconditions.checkNotNull( matchFailHandler );
 		return this;
 	}
-	
+
 	public PreferenceScrape setMatchFailHandler( MatchFailHandler<RSSTorrent> matchFailHandler ) {
 		this.matchFailHandler = Optional.of( matchFailHandler );
 		return this;
@@ -117,7 +119,7 @@ public class PreferenceScrape {
 				matchFailHandler.get().addFailedMatch( failedMatch );
 			}
 		}
-		
+
 		return out;
 	}
 

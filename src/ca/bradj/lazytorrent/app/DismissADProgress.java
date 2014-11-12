@@ -3,7 +3,7 @@ package ca.bradj.lazytorrent.app;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
-import ca.bradj.lazytorrent.rss.FXThreading;
+import ca.bradj.fx.FXThreading;
 
 import com.google.common.base.Preconditions;
 

@@ -10,6 +10,9 @@ import java.util.Collection;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.Pair;
+
+import org.slf4j.Logger;
+
 import ca.bradj.common.base.Failable;
 import ca.bradj.lazytorrent.connection.Torrent;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
@@ -51,11 +54,11 @@ public class DownloadScrapedItems implements EventHandler<ActionEvent> {
 				if (f.isSuccess()) {
 					Torrent.openAndStart(f.get(), logger, torrentCommand);
 					alreadyDownloaded.add(torrent);
-					logger.log("Succesfully opened: \"" + f.get().getName() + "\" because it matched: \""
+					logger.debug("Succesfully opened: \"" + f.get().getName() + "\" because it matched: \""
 							+ i.getValue() + "\"");
 					continue;
 				}
-				logger.log("Failed to download " + torrent.getName().substring(0, 40) + " because: " + f.getReason());
+				logger.debug("Failed to download " + torrent.getName().substring(0, 40) + " because: " + f.getReason());
 				System.err.println(f.getReason());
 			} catch (MalformedURLException e) {
 				alreadyDownloaded.add(torrent);

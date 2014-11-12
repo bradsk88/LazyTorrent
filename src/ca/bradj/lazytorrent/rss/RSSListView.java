@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
+import ca.bradj.fx.FXThreading;
 import ca.bradj.lazytorrent.prefs.Preferences;
 
 import com.google.common.collect.ImmutableList;

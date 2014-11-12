@@ -3,22 +3,22 @@ package ca.bradj.lazytorrent.automated;
 import java.util.Collection;
 
 import javafx.util.Pair;
+
+import org.slf4j.Logger;
+
 import ca.bradj.common.base.WithConfidence;
 import ca.bradj.lazytorrent.app.AppConfig;
 import ca.bradj.lazytorrent.app.DownloadScrapedItems;
-import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.app.ScrapedItemsProvider;
 import ca.bradj.lazytorrent.rss.RSSFeed;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.lazytorrent.scrape.RSSFeedScraper;
-import ca.bradj.scrape.matching.MatchFailHandler;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 public class DownloadLatestMatches implements Runnable {
 
-	private final RSSFeed rss; 
+	private final RSSFeed rss;
 	private final Logger logger;
 	private AppConfig appConfig;
 
@@ -27,7 +27,7 @@ public class DownloadLatestMatches implements Runnable {
 		this.logger = logger;
 		this.appConfig = Preconditions.checkNotNull(appCfg);
 	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -54,5 +54,5 @@ public class DownloadLatestMatches implements Runnable {
 			}
 		};
 	}
-	
+
 }

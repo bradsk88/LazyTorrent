@@ -7,8 +7,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import ca.bradj.lazytorrent.matching.Negation;
-import ca.bradj.lazytorrent.matching.Negations;
+import ca.bradj.gsmatch.Negation;
+import ca.bradj.gsmatch.Negations;
 
 import com.google.common.collect.Lists;
 

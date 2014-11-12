@@ -50,11 +50,16 @@
 		<dependency>
 			<groupId>ca.bradj</groupId>
 			<artifactId>brava</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 			<dependency>
 			<groupId>ca.bradj</groupId>
 			<artifactId>Scrape</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.bradj</groupId>
+			<artifactId>GSMatch</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -71,6 +76,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

@@ -19,9 +19,10 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.slf4j.Logger;
+
 import ca.bradj.common.base.Failable;
 import ca.bradj.lazytorrent.app.AlreadyDownloaded;
-import ca.bradj.lazytorrent.app.Logger;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;

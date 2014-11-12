@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.Optional;
 
 import javafx.util.Pair;
+
+import org.slf4j.Logger;
+
 import ca.bradj.common.base.WithConfidence;
-import ca.bradj.lazytorrent.app.Logger;
 import ca.bradj.lazytorrent.prefs.Preferences;
 import ca.bradj.lazytorrent.rss.RSSTorrent;
 import ca.bradj.scrape.matching.MatchFailHandler;
@@ -24,11 +26,11 @@ public class RSSFeedScraper {
 		this.prefs = Preconditions.checkNotNull(prefs);
 		this.logger = Preconditions.checkNotNull(logger);
 	}
-	
+
 	public RSSFeedScraper setMatchFailHandler( MatchFailHandler<RSSTorrent> handler ) {
 		return setMatchFailHandler( Optional.of( handler ) );
 	}
-	
+
 	public RSSFeedScraper setMatchFailHandler(
 			Optional<MatchFailHandler<RSSTorrent>> handler) {
 		this.handler = Preconditions.checkNotNull( handler );
@@ -45,7 +47,7 @@ public class RSSFeedScraper {
 		for (String p : prefs.getList()) {
 			out.addAll( new PreferenceScrape(p, logger)
 				.setMatchFailHandler( handler )
-				.chooseBestMatch(lastItems) 
+				.chooseBestMatch(lastItems)
 			);
 		}
 		return out;
